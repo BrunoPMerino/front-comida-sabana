@@ -6,7 +6,7 @@ import FormInput from "../components/FormInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { Link } from "react-router-dom";
 //import { useNavigate } from "react-router-dom";
-import { useUserStore } from "../store/useUserStore"
+import useUserStore from "../store/useUserStore"
 
 export default function Login() {
   const [email, setEmail] = useState("");
