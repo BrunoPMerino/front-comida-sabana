@@ -6,17 +6,19 @@ import RestaurantHeader from "../components/RestaurantHeader";
 import TopNavbar from "../components/TopNavbar";
 import MobileNavbar from "../components/MobileNavbar";
 import UserInfoPopup from "../components/UserInfoPopup";
+import ProductPopup from "../components/ProductPopup";
 import useUserStore from "../store/useUserStore";
 
 export default function RestaurantList() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-
     if (user === undefined) return;
 
     if (!user) {
@@ -59,18 +61,30 @@ export default function RestaurantList() {
             />
             <div className="flex gap-4 overflow-x-auto pb-2">
               {(entry.products || []).map((item, index) => (
-                <ProductCard
-                  key={index}
-                  image={item.imageUrl}
-                  name={item.name}
-                  price={item.price}
-                  description={item.description}
-                />
+                <div key={index} onClick={() => setSelectedProduct(item)} className="cursor-pointer">
+                  <ProductCard
+                    image={item.imageUrl}
+                    name={item.name}
+                    price={item.price}
+                    description={item.description}
+                  />
+                </div>
               ))}
             </div>
           </div>
         ))}
       </div>
+
+      {selectedProduct && (
+        <ProductPopup
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onAddToCart={(productWithQuantity) => {
+            console.log("Producto agregado al carrito:", productWithQuantity);
+          }}
+        />
+      )}
+
       <MobileNavbar />
     </>
   );

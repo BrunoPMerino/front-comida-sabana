@@ -2,7 +2,7 @@ import { FaStar, FaChevronRight, FaRegClock } from "react-icons/fa";
 
 export default function RestaurantHeader({ name, rating, deliveryTime }) {
   return (
-    <div className="flex items-center justify-between mb-2">
+    <div className="border-t border-gray-200 pt-2 mt-2 flex items-center justify-between mb-2">
       <div>
         <div className="flex items-center gap-2 mb-1">
           <h2 className="text-xl font-bold">{name}</h2>
