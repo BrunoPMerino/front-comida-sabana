@@ -8,35 +8,42 @@ import { Link, useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 
 export default function Register() {
-  const [firstName, setFirstName] = useState("");
+  const [name, setName] = useState(""); 
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // 👈 Estado para el error
+  const [error, setError] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const { setUser } = useUserStore();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError(""); // Limpia el error anterior
+    setError("");
 
     try {
-      await axios.post(`${API_URL}/api/auth/register`, {
-        firstName,
-        lastName,
-        email,
-        password,
-      }, { withCredentials: true });
+      await axios.post(
+        `${API_URL}/api/auth/signup`,
+        { email, name, lastName, password },
+        { withCredentials: true }
+      );
 
-      const meResponse = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true });
+      const meResponse = await axios.get(`${API_URL}/api/auth/me`, {
+        withCredentials: true,
+      });
+
       const user = meResponse.data.user;
-
-      useUserStore.setUser(user);
-      navigate("/dashboard");
+      setUser(user);
+      navigate("/home");
     } catch (error) {
       console.error("Registro fallido:", error.response?.data || error.message);
-      setError(error.response?.data?.message || "Ocurrió un error durante el registro.");
+
+      if (Array.isArray(error.response?.data?.errors)) {
+        setError(error.response.data.errors.map(e => e.msg).join(" - "));
+      } else {
+        setError(error.response?.data?.message || "Ocurrió un error durante el registro.");
+      }
     }
   };
 
@@ -50,9 +57,9 @@ export default function Register() {
               <FormInput
                 label="Nombre"
                 type="text"
-                name="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="w-1/2">

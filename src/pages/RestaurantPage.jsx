@@ -11,6 +11,7 @@ export default function RestaurantPage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState("");
+  const [loading, setLoading] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
@@ -23,21 +24,25 @@ export default function RestaurantPage() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products/restaurant/${restaurantId}/public`);
-        setRestaurant(res.data.restaurant);
-        setProducts(res.data.products);
+        const response = await axios.get(`${API_URL}/api/products/restaurant/${restaurantId}/public`, {
+          withCredentials: true
+        });
+        setRestaurant(response.data.restaurant);
+        setProducts(response.data.products);
 
-        const cats = [...new Set(res.data.products.map(p => p.category))];
+        const cats = [...new Set(response.data.products.map(p => p.category))];
         setCategories(cats);
         setActiveCategory(cats[0]);
       } catch (err) {
         console.error("Error loading restaurant data:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, [restaurantId, API_URL, user, navigate]);
 
-  if (!restaurant) return <p className="p-4">Cargando restaurante...</p>;
+  if (loading) return <p className="p-4 animate-pulse text-gray-600">Cargando restaurante...</p>;
 
   return (
     <div className="px-4 py-4 max-w-screen-xl mx-auto">

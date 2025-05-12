@@ -7,11 +7,16 @@ import useUserStore from "../store/useUserStore";
 
 export default function RestaurantList() {
   const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
+    // Si la validación inicial aún no termina (user es undefined), no hacer nada
+    if (user === undefined) return;
+
+    // Si el usuario no está autenticado, redirigir
     if (!user) {
       navigate("/");
       return;
@@ -23,7 +28,6 @@ export default function RestaurantList() {
           withCredentials: true,
         });
 
-        // Se espera que la respuesta incluya el restaurante y productos
         const { restaurant, products } = response.data;
 
         setRestaurants([
@@ -34,11 +38,17 @@ export default function RestaurantList() {
         ]);
       } catch (error) {
         console.error("Error fetching restaurant and products:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchRestaurantWithProducts();
   }, [API_URL, navigate, user]);
+
+  if (loading) {
+    return <div className="p-4 text-gray-600 animate-pulse">Cargando restaurantes...</div>;
+  }
 
   return (
     <div className="px-4 py-6">
@@ -51,7 +61,7 @@ export default function RestaurantList() {
           />
 
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {restaurant.products.map((item, index) => (
+            {(restaurant.products || []).map((item, index) => (
               <ProductCard
                 key={index}
                 image={item.image}
