@@ -10,13 +10,21 @@ export default function ReviewPopup({ onClose, onSubmit }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center md:justify-center z-50">
-      <div className="bg-white w-full md:w-[600px] rounded-t-2xl md:rounded-xl p-6 md:mb-0">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-end md:items-center md:justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-white w-full md:w-[600px] rounded-t-2xl md:rounded-xl p-6 md:mb-0"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Texto visual "Omitir" justo fuera del borde superior derecho del card */}
+        <span className="absolute -top-5 right-4 text-white text-sm pointer-events-none select-none">
+          Omitir
+        </span>
+
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Cuéntanos tu experiencia...</h2>
-          <button onClick={onClose} className="text-sm text-gray-600 hover:text-black font-semibold md:hidden">
-            Omitir
-          </button>
         </div>
 
         <div className="flex justify-center gap-2 mb-4">

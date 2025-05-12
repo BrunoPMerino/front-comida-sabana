@@ -1,18 +1,20 @@
-import { AiOutlineStar } from "react-icons/ai";
-import { FaChevronRight } from "react-icons/fa";
+import { FaStar, FaChevronRight, FaRegClock } from "react-icons/fa";
 
 export default function RestaurantHeader({ name, rating, deliveryTime }) {
   return (
     <div className="flex items-center justify-between mb-2">
       <div>
-        <h2 className="text-lg font-semibold">{name}</h2>
-        <p className="text-sm text-gray-500">{deliveryTime} min</p>
+        <div className="flex items-center gap-2 mb-1">
+          <h2 className="text-xl font-bold">{name}</h2>
+          <FaStar className="text-yellow-400 w-4 h-4" />
+          <span className="text-sm font-semibold">{rating}</span>
+        </div>
+        <p className="text-sm text-gray-500 flex items-center gap-1">
+          <FaRegClock className="w-4 h-4" />
+          {deliveryTime} min
+        </p>
       </div>
-      <div className="flex items-center gap-1">
-        <AiOutlineStar className="text-yellow-500" />
-        <span className="text-sm font-semibold">{rating}</span>
-        <FaChevronRight className="ml-2 text-gray-500" />
-      </div>
+      <FaChevronRight className="text-gray-500" />
     </div>
   );
 }
