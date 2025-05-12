@@ -30,13 +30,13 @@ export default function App() {
             console.log("Token refresh failed.");
             console.error(refreshError);
             setUser(null);
-            navigate("/login"); // redirige al login si refresh falla
+            navigate("/"); // redirige al login si refresh falla
           }
         } else {
           console.log("Usuario no autenticado o error desconocido.");
           console.error(error);
           setUser(null);
-          navigate("/login"); // redirige si otro error ocurre
+          navigate("/"); // redirige si otro error ocurre
         }
       }
     };
