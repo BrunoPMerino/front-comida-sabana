@@ -19,7 +19,7 @@ export default function App() {
       } catch (error) {
         if (error.response?.status === 401 || error.response?.status === 403) {
           try {
-            await axios.get(`${API_URL}/api/auth/refresh`, {
+            await axios.post(`${API_URL}/api/auth/refresh`, {
               withCredentials: true,
             });
             const res = await axios.get(`${API_URL}/api/auth/me`, {
