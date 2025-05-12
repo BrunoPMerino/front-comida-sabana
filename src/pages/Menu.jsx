@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useUserStore from "../store/useUserStore";
 import MobileNavbar from "../components/MobileNavbar";
+import TopNavbar from "../components/TopNavbar";
 
 export default function Menu() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -12,6 +13,7 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Esperar a que Zustand defina si hay sesión o no
     if (user === undefined) return;
 
     if (!user) {
@@ -41,16 +43,15 @@ export default function Menu() {
 
   return (
     <div className="relative min-h-screen pb-16">
-      <div className="p-6">
+      <TopNavbar />
+      <div className="p-6 pt-20">
         <h1 className="text-2xl font-bold mb-4">Menú disponible</h1>
         <ul className="space-y-2">
           {products.map((product, index) => (
             <li key={index} className="border p-4 rounded shadow-sm bg-white">
               <p className="font-semibold">{product.name}</p>
               <p className="text-sm text-gray-500">{product.description}</p>
-              <p className="text-sm font-bold text-black">
-                ${product.price.toLocaleString()}
-              </p>
+              <p className="text-sm font-bold text-black">${product.price.toLocaleString()}</p>
             </li>
           ))}
         </ul>
