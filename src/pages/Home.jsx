@@ -13,7 +13,8 @@ export default function RestaurantList() {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user === undefined) return; // aún no sabemos si está logueado
+
+    if (user === undefined) return;
 
     if (!user) {
       // si el usuario no esta autenticado redirigir
@@ -21,21 +22,12 @@ export default function RestaurantList() {
       return;
     }
 
-    const fetchRestaurantWithProducts = async () => {
+    const fetchRestaurants = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/products`, {
           withCredentials: true,
         });
-
-        const { restaurant, products } = response.data;
-        console.log(restaurant, products);
-
-        setRestaurants([
-          {
-            ...restaurant,
-            products,
-          },
-        ]);
+        setRestaurants(response.data);
       } catch (error) {
         console.error("Error fetching restaurant and products:", error);
       } finally {
@@ -43,7 +35,7 @@ export default function RestaurantList() {
       }
     };
 
-    fetchRestaurantWithProducts();
+    fetchRestaurants();
   }, [API_URL, navigate, user]);
 
   // mientras user está en loading o datos se están trayendo, mostrar spinner
@@ -53,18 +45,18 @@ export default function RestaurantList() {
 
   return (
     <div className="px-4 py-6">
-      {restaurants.map((restaurant, idx) => (
+      {restaurants.map((entry, idx) => (
         <div key={idx} className="mb-8">
           <RestaurantHeader
-            name={restaurant.name}
-            rating={restaurant.rating}
-            deliveryTime={restaurant.deliveryTime}
+            name={entry.restaurant.name}
+            rating={entry.restaurant.averageScore}
+            deliveryTime={entry.restaurant.estimatedTime}
           />
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {(restaurant.products || []).map((item, index) => (
+            {(entry.products || []).map((item, index) => (
               <ProductCard
                 key={index}
-                image={item.image}
+                image={item.imageUrl}
                 name={item.name}
                 price={item.price}
                 description={item.description}
