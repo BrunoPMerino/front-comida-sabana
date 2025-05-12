@@ -1,51 +1,59 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { routes } from "./config/routes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUserStore from "./store/useUserStore";
 import axios from "axios";
 
 export default function App() {
-  const { user, setUser } = useUserStore();
+  const { setUser } = useUserStore();
+  const [authChecked, setAuthChecked] = useState(false); // clave para evitar doble render
   const API_URL = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkAuth = async () => {
       try {
+        // 1. Intentamos obtener el usuario directamente
         const res = await axios.get(`${API_URL}/api/auth/me`, {
           withCredentials: true,
         });
         setUser(res.data.user);
-      } catch (error) {
-        if (error.response?.status === 401 || error.response?.status === 403) {
+      } catch (err) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
           try {
-            await axios.post(`${API_URL}/api/auth/refresh`, {
+            // 2. Intentamos refrescar el token
+            await axios.post(`${API_URL}/api/auth/refresh`, {}, {
               withCredentials: true,
             });
+
+            // 3. Reintentamos obtener el usuario
             const res = await axios.get(`${API_URL}/api/auth/me`, {
               withCredentials: true,
             });
             setUser(res.data.user);
-          } catch (refreshError) {
-            console.log("Token refresh failed.");
-            console.error(refreshError);
+          } catch (refreshErr) {
+            // 4. Si falla el refresh, el usuario no está autenticado
+            console.error("Token refresh failed", refreshErr);
             setUser(null);
-            navigate("/"); // redirige al login si refresh falla
           }
         } else {
-          console.log("Usuario no autenticado o error desconocido.");
-          console.error(error);
+          console.error("Error desconocido al verificar sesión", err);
           setUser(null);
-          navigate("/"); // redirige si otro error ocurre
         }
+      } finally {
+        // 5. Ya sabemos si el usuario está o no → podemos mostrar rutas
+        setAuthChecked(true);
       }
     };
 
-    if (!user) {
-      fetchUser();
-    }
-  }, [user, setUser, API_URL, navigate]);
+    checkAuth();
+  }, [API_URL, setUser]);
 
+  // 6. Mientras no sepamos si hay usuario, mostramos loading
+  if (!authChecked) {
+    return <div className="p-4 text-gray-600 animate-pulse">Verificando sesión...</div>;
+  }
+
+  // 7. Ya podemos renderizar rutas (privadas o públicas)
   return (
     <Routes>
       {routes.map((route) => (
