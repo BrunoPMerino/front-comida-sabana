@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { routes } from "./config/routes";
 import { useEffect } from "react";
 import useUserStore from "./store/useUserStore";
+import axios from "axios"
 
 export default function App() {
   const { user, setUser } = useUserStore();
@@ -14,8 +15,9 @@ export default function App() {
           withCredentials: true,
         });
         setUser(res.data.user);
-      } catch (err) {
+      } catch (error) {
         console.log("Usuario no autenticado o sesión expirada.");
+        console.error(error);
         setUser(null); // limpiar en caso de error
       }
     };
