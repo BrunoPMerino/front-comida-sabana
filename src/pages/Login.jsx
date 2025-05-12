@@ -12,6 +12,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
+  const { setUser } = useUserStore();
   //const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,7 +20,7 @@ export default function Login() {
       await axios.post(`${API_URL}/api/auth/login`, { email, password }, {withCredentials: true,});
       const meResponse = await axios.get(`${API_URL}/api/auth/me`, {withCredentials: true,});
       const user = meResponse.data.user;
-      useUserStore.setUser(user); // saves in Zustand
+      setUser(user); // saves in Zustand
       //navigate("/dashboard");
     } catch (error) {
       console.error("Login failed: ", error.response?.data || error.message);
