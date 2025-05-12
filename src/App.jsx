@@ -25,6 +25,7 @@ export default function App() {
     }
   }, [user, setUser, API_URL]);
 
+  
   return (
     <Routes>
       {routes.map((route) => (
