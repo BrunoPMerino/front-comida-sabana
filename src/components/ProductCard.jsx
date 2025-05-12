@@ -2,7 +2,7 @@ export default function ProductCard({ image, name, price, description }) {
   const validImage = image?.startsWith("http") ? image : "/placeholder.png";
 
   return (
-    <div className="min-w-[140px] bg-white rounded-md shadow p-2">
+    <div className="bg-white rounded-md shadow p-4 flex flex-col justify-between w-[200px] h-[260px] shrink-0">
       <img
         src={validImage}
         alt={name}
