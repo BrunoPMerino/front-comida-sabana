@@ -13,12 +13,11 @@ export default function RestaurantList() {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    // Si la validación inicial aún no termina (user es undefined), no hacer nada
-    if (user === undefined) return;
+    if (user === undefined) return; // aún no sabemos si está logueado
 
-    // Si el usuario no está autenticado, redirigir
     if (!user) {
-      navigate("/");
+      // si el usuario no esta autenticado redirigir
+      navigate("/"); 
       return;
     }
 
@@ -46,6 +45,7 @@ export default function RestaurantList() {
     fetchRestaurantWithProducts();
   }, [API_URL, navigate, user]);
 
+  // mientras user está en loading o datos se están trayendo, mostrar spinner
   if (user === undefined || loading) {
     return <div className="p-4 text-gray-600 animate-pulse">Cargando restaurantes...</div>;
   }
@@ -59,7 +59,6 @@ export default function RestaurantList() {
             rating={restaurant.rating}
             deliveryTime={restaurant.deliveryTime}
           />
-
           <div className="flex gap-4 overflow-x-auto pb-2">
             {(restaurant.products || []).map((item, index) => (
               <ProductCard
