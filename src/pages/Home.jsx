@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import RestaurantHeader from "../components/RestaurantHeader";
+import TopNavbar from "../components/TopNavbar";
+import MobileNavbar from "../components/MobileNavbar";
+import UserInfoPopup from "../components/UserInfoPopup";
 import useUserStore from "../store/useUserStore";
 
 export default function RestaurantList() {
@@ -41,27 +44,31 @@ export default function RestaurantList() {
   }
 
   return (
-    <div className="px-4 py-6">
-      {restaurants.map((entry, idx) => (
-        <div key={idx} className="mb-8">
-          <RestaurantHeader
-            name={entry.restaurant.name}
-            rating={entry.restaurant.averageScore}
-            deliveryTime={entry.restaurant.estimatedTime}
-          />
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {(entry.products || []).map((item, index) => (
-              <ProductCard
-                key={index}
-                image={item.imageUrl}
-                name={item.name}
-                price={item.price}
-                description={item.description}
-              />
-            ))}
+    <>
+      <TopNavbar />
+      <div className="px-4 pt-20 pb-28">
+        {restaurants.map((entry, idx) => (
+          <div key={idx} className="mb-8">
+            <RestaurantHeader
+              name={entry.restaurant.name}
+              rating={entry.restaurant.averageScore}
+              deliveryTime={entry.restaurant.estimatedTime}
+            />
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {(entry.products || []).map((item, index) => (
+                <ProductCard
+                  key={index}
+                  image={item.imageUrl}
+                  name={item.name}
+                  price={item.price}
+                  description={item.description}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <MobileNavbar />
+    </>
   );
 }

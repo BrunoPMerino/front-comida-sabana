@@ -21,7 +21,7 @@ export default function Login() {
       const meResponse = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true });
       const user = meResponse.data.user;
       setUser(user); // saves in Zustand
-      navigate("/menu");
+      navigate("/home");
     } catch (error) {
       console.error("Login failed: ", error.response?.data || error.message);
     }
