@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import LogoHeader from "../components/LogoHeader";
 import AuthCard from "../components/AuthCard";
@@ -13,11 +13,17 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const { setUser } = useUserStore();
+  const { user, setUser } = useUserStore();
 
+    useEffect(() => {
+      if (user === undefined) return;
+      if (user) {
+        navigate("/home");
+      }
+    }, [user, navigate]);
+  
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
