@@ -42,7 +42,6 @@ export default function RestaurantList() {
         setLoading(false);
       }
     };
-    
 
     fetchRestaurantWithProducts();
   }, [API_URL, navigate, user]);

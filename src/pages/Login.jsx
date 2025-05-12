@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import LogoHeader from "../components/LogoHeader";
 import AuthCard from "../components/AuthCard";
@@ -8,12 +8,22 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore"
 
+
 export default function Login() {
+  const user = useUserStore((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
   const { setUser } = useUserStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user === undefined) return;
+    if (user) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
