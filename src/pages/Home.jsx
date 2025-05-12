@@ -46,7 +46,7 @@ export default function RestaurantList() {
     fetchRestaurantWithProducts();
   }, [API_URL, navigate, user]);
 
-  if (loading) {
+  if (user === undefined || loading) {
     return <div className="p-4 text-gray-600 animate-pulse">Cargando restaurantes...</div>;
   }
 
