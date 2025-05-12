@@ -31,7 +31,7 @@ export default function Login() {
     <div className="min-h-screen flex flex-col justify-center items-center px-4 bg-white">
       <LogoHeader />
       <AuthCard title="Inicio de sesión">
-        <form> //onSubmit?
+        <form>
           <FormInput
             label="Correo electrónico"
             type="email"
@@ -62,7 +62,7 @@ export default function Login() {
                 </Link>
             </div>
 
-          <PrimaryButton onClick={handleLogin}>Ingresar</PrimaryButton> //maybe change button on click functionality
+          <PrimaryButton onClick={handleLogin}>Ingresar</PrimaryButton> 
         </form>
       </AuthCard>
     </div>
