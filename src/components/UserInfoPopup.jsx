@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 import { FaUser } from "react-icons/fa";
 
 export default function UserInfoPopup() {
   const { user, logout } = useUserStore();
   const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate(); // <-- hook para redirigir
 
   if (!user) return null;
 
@@ -27,6 +29,7 @@ export default function UserInfoPopup() {
               onClick={() => {
                 logout();
                 setShowPopup(false);
+                navigate("/login"); // <-- redirige a login
               }}
               className="bg-red-600 text-white w-full py-2 rounded font-semibold"
             >

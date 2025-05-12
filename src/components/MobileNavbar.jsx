@@ -15,7 +15,7 @@ export default function MobileNavbar({ isDisabled = false }) {
       <Link to="/menu" aria-label="Menu">
         <FaMapMarkerAlt className="w-6 h-6" />
       </Link>
-      <Link to="/login" aria-label="Login">
+      <Link to="/reviews" aria-label="Login">
         <FaListAlt className="w-6 h-6" />
       </Link>
       <Link to="/register" aria-label="Register">
