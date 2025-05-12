@@ -5,7 +5,7 @@ import AuthCard from "../components/AuthCard";
 import FormInput from "../components/FormInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { Link } from "react-router-dom";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore"
 
 export default function Login() {
@@ -13,7 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
   const { setUser } = useUserStore();
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -21,7 +21,7 @@ export default function Login() {
       const meResponse = await axios.get(`${API_URL}/api/auth/me`, {withCredentials: true,});
       const user = meResponse.data.user;
       setUser(user); // saves in Zustand
-      //navigate("/dashboard");
+      navigate("/home");
     } catch (error) {
       console.error("Login failed: ", error.response?.data || error.message);
     }
