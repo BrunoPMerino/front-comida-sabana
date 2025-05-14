@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { FaPlus, FaMinus, FaTimes } from "react-icons/fa";
+import useCartStore from "../store/useCartStore";
 
-export default function ProductPopup({ product, onClose, onAddToCart }) {
+export default function ProductPopup({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
+  const addToCart = useCartStore((state) => state.addToCart);
 
   if (!product) return null;
 
@@ -12,7 +14,7 @@ export default function ProductPopup({ product, onClose, onAddToCart }) {
   const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAdd = () => {
-    onAddToCart({ ...product, quantity });
+    addToCart({ ...product, quantity });
     onClose();
   };
 
@@ -49,8 +51,8 @@ export default function ProductPopup({ product, onClose, onAddToCart }) {
         <p className="text-lg font-semibold mb-1">${price.toLocaleString()}</p>
         <p className="text-sm text-gray-700 mb-4">{description}</p>
 
-        {/* Selector de cantidad */}
-        <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+        {/* Selector de cantidad centrado */}
+        <div className="flex items-center justify-center gap-4 mb-4">
           <button
             onClick={decrease}
             className="w-8 h-8 flex items-center justify-center border rounded-full text-lg"

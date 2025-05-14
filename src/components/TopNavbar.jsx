@@ -2,13 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaBars, FaShoppingCart, FaUser } from "react-icons/fa";
 import useUserStore from "../store/useUserStore";
+import CartPopup from "./CartPopup";
 
 export default function TopNavbar() {
   const { user, logout } = useUserStore();
   const [showPopup, setShowPopup] = useState(false);
+  const [showCart, setShowCart] = useState(false);
   const popupRef = useRef();
 
   const togglePopup = () => setShowPopup(!showPopup);
+  const toggleCart = () => setShowCart(!showCart);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -23,7 +26,12 @@ export default function TopNavbar() {
   return (
     <header className="fixed top-0 left-0 w-full bg-white z-50 shadow border-b">
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Logo + título visibles SIEMPRE */}
+        {/* Botón de menú (desktop/tablet) */}
+        <div className="hidden md:block mr-4">
+          <FaBars className="text-xl text-[#002c66]" />
+        </div>
+
+        {/* Logo + título */}
         <div className="flex items-center gap-2">
           <img src="/Unisabana-logo.png" alt="Logo" className="h-6 md:h-8" />
           <span className="font-bold text-[#002c66] text-sm md:text-lg">Comida Sabana</span>
@@ -34,10 +42,8 @@ export default function TopNavbar() {
           <div className="block md:hidden" onClick={togglePopup}>
             <FaUser className="text-xl text-[#002c66]" />
           </div>
-          <div className="hidden md:block">
-            <Link to="/menu">
-              <FaShoppingCart className="text-xl text-[#002c66]" />
-            </Link>
+          <div className="hidden md:block cursor-pointer" onClick={toggleCart}>
+            <FaShoppingCart className="text-xl text-[#002c66]" />
           </div>
         </div>
       </div>
@@ -62,6 +68,9 @@ export default function TopNavbar() {
           </div>
         </>
       )}
+
+      {showCart && <CartPopup onClose={() => setShowCart(false)} />}
     </header>
   );
 }
+
