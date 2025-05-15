@@ -22,7 +22,6 @@ export default function RestaurantList() {
     if (user === undefined) return;
 
     if (!user) {
-      // si el usuario no esta autenticado redirigir
       navigate("/"); 
       return;
     }
@@ -43,7 +42,6 @@ export default function RestaurantList() {
     fetchRestaurants();
   }, [API_URL, navigate, user]);
 
-  // mientras user está en loading o datos se están trayendo, mostrar spinner
   if (user === undefined || loading) {
     return <div className="p-4 text-gray-600 animate-pulse">Cargando restaurantes...</div>;
   }
@@ -52,6 +50,8 @@ export default function RestaurantList() {
     <>
       <TopNavbar />
       <div className="px-4 pt-20 pb-28">
+        <h1 className="text-3xl font-bold mb-8 text-[#002c66]">Página Principal</h1>
+
         {restaurants.map((entry, idx) => (
           <div key={idx} className="mb-8">
             <RestaurantHeader

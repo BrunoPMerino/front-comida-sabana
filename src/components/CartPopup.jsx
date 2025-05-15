@@ -101,7 +101,7 @@ export default function CartPopup({ onClose }) {
             onClose={() => {
               setShowSuccessPopup(false);
               onClose();
-              navigate("/historial");
+              navigate("/history");
             }}
           />
         )}

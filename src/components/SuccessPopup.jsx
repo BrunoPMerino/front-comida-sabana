@@ -10,7 +10,7 @@ export default function SuccessPopup({ countdown, setCountdown, onClose }) {
       timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
     } else {
       onClose();
-      navigate("/historial");
+      navigate("/history");
     }
     return () => clearTimeout(timer);
   }, [countdown, setCountdown, onClose, navigate]);
@@ -27,7 +27,7 @@ export default function SuccessPopup({ countdown, setCountdown, onClose }) {
         <button
           onClick={() => {
             onClose();
-            navigate("/historial");
+            navigate("/history");
           }}
           className="mt-2 px-4 py-2 text-sm font-semibold bg-[#002c66] text-white rounded hover:bg-[#001a4d] transition"
         >

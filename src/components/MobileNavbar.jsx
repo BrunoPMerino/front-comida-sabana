@@ -36,10 +36,10 @@ export default function MobileNavbar({ isDisabled = false }) {
         <Link to="/home" aria-label="Home">
           <FaHome className="w-6 h-6" />
         </Link>
-        <Link to="/menu" aria-label="Menu">
+        <Link to="/reviews" aria-label="Reseñas">
           <FaMapMarkerAlt className="w-6 h-6" />
         </Link>
-        <Link to="/reviews" aria-label="Login">
+        <Link to="/history" aria-label="Historial">
           <FaListAlt className="w-6 h-6" />
         </Link>
         <button onClick={() => setShowPopup(true)} aria-label="Register">

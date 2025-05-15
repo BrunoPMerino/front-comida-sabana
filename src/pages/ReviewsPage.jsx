@@ -42,7 +42,7 @@ export default function ReviewsPage() {
             <button onClick={() => navigate(-1)} className="md:hidden">
               <FaArrowLeft className="text-xl text-[#002c66]" />
             </button>
-            <h1 className="text-xl font-bold md:text-2xl">
+            <h1 className="text-3xl font-bold mb-8 text-[#002c66]">
               <span className="md:hidden">Reseñas</span>
               <span className="hidden md:inline">Reseñas de Embarcadero</span>
             </h1>
