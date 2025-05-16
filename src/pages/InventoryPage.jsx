@@ -1,83 +1,86 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 import TopNavbar from "../components/TopNavbar";
 import MobileNavbar from "../components/MobileNavbar";
+import ProductInventoryCard from "../components/ProductInventoryCard";
+import EditProductPopup from "../components/EditProductPopup";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function InventoryPage() {
-  const { user, setUser } = useUserStore();
+  const user = useUserStore((state) => state.user);
   const [products, setProducts] = useState([]);
-  const [restaurantId, setRestaurantId] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [isNew, setIsNew] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/auth/me`, {
-          withCredentials: true,
-        });
-        setUser(response.data);
+    if (user === undefined) return;
+    if (!user || user.role !== "pos") {
+      navigate("/");
+      return;
+    }
+    fetchProducts();
+  }, [user]);
 
-        if (response.data.role !== "pos") {
-          navigate("/");
-        } else {
-          setRestaurantId(response.data.restaurantId);
-        }
-      } catch (error) {
-        console.error("Error al verificar usuario:", error);
-        navigate("/");
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/products/restaurant/${user.restaurantId}`, {
+        withCredentials: true,
+      });
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+    }
+  };
 
-    verifyUser();
-  }, [navigate, setUser]);
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    setIsNew(false);
+  };
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      if (!restaurantId) return;
-      try {
-        const response = await axios.get(`${API_URL}/api/orders/restaurant/${restaurantId}`, {
-          withCredentials: true,
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error al cargar inventario:", error);
-      }
-    };
+  const handleAddNew = () => {
+    setEditingProduct({});
+    setIsNew(true);
+  };
 
-    fetchInventory();
-  }, [restaurantId]);
+  const handleSave = () => {
+    setEditingProduct(null);
+    setIsNew(false);
+    fetchProducts();
+  };
 
   return (
     <>
       <TopNavbar />
       <div className="px-4 pt-20 pb-28">
-        <h1 className="text-3xl font-bold mb-6">Inventario</h1>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <h1 className="text-2xl font-bold mb-4">Inventario</h1>
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
           {products.map((product) => (
-            <div key={product._id} className="relative border p-2 rounded-md">
-              <div className="w-full aspect-square bg-gray-200 rounded relative">
-                <div className="absolute top-1 right-1 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs cursor-pointer">
-                  ✎
-                </div>
-              </div>
-              <div className="mt-2 text-sm text-gray-800 font-semibold">${product.price}</div>
-              <div className="text-xs text-gray-500">Restantes: {product.stock}</div>
-            </div>
+            <ProductInventoryCard key={product._id} product={product} onEdit={() => handleEdit(product)} />
           ))}
-
-          {/* Botón para añadir producto */}
-          <div className="border p-4 flex flex-col items-center justify-center cursor-pointer">
-            <div className="text-4xl font-bold">+</div>
-            <div className="text-sm mt-2">Añadir producto</div>
+          <div
+            onClick={handleAddNew}
+            className="flex flex-col items-center justify-center border-2 border-black border-dashed cursor-pointer h-full aspect-square"
+          >
+            <span className="text-4xl">+</span>
+            <span className="text-sm">Añadir producto</span>
           </div>
         </div>
       </div>
       <MobileNavbar />
+
+      {editingProduct !== null && (
+        <EditProductPopup
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onSave={handleSave}
+          isNew={isNew}
+        />
+      )}
     </>
   );
 }
+
