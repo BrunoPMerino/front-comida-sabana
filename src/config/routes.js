@@ -15,5 +15,6 @@ export const routes = [
   { id: 'reviews', path: '/reviews', name: 'Reseñas', component: ReviewsPage },
   { id: 'orderhistory', path: '/history', name: 'Historial', component: OrderHistory },
   { id: 'restaurantPage', path: '/restaurant/:restaurantId', name: 'Pagina restaurante', component: RestaurantPage },
-  { id: 'inventory', path: '/inventory', name: 'Inventario', component: InventoryPage } 
+  { id: 'inventory', path: '/inventory', name: 'Inventario', component: InventoryPage },
+  { id: 'map', path: '/map', name: 'Mapa', component: Map }
 ];

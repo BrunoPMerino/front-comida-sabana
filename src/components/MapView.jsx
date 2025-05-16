@@ -1,20 +1,18 @@
-// components/MapView.jsx
-import Map, { Marker, NavigationControl } from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+import MapGL, { Marker, NavigationControl } from 'react-map-gl';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export default function MapView({ restaurants, onSelect }) {
   return (
-    <Map
+    <MapGL
       initialViewState={{
-        latitude: 35.6895, // example latitude
-        longitude: 139.6917, 
-        zoom: 15,
+        latitude: 4.8646,  // Example: Universidad de La Sabana
+        longitude: -74.0426,
+        zoom: 16,
       }}
+      mapLib={maplibregl}
+      mapStyle="https://demotiles.maplibre.org/style.json"
       style={{ width: '100%', height: '100vh' }}
-      mapboxAccessToken={MAPBOX_TOKEN}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
     >
       <NavigationControl position="top-right" />
       {restaurants.map((r) => (
@@ -26,6 +24,6 @@ export default function MapView({ restaurants, onSelect }) {
           onClick={() => onSelect(r)}
         />
       ))}
-    </Map>
+    </MapGL>
   );
 }
