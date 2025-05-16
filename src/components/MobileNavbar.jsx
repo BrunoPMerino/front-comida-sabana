@@ -36,7 +36,7 @@ export default function MobileNavbar({ isDisabled = false }) {
         <Link to="/home" aria-label="Home">
           <FaHome className="w-6 h-6" />
         </Link>
-        <Link to="/reviews" aria-label="Reseñas">
+        <Link to="/map" aria-label="Mapa">
           <FaMapMarkerAlt className="w-6 h-6" />
         </Link>
         <Link to="/history" aria-label="Historial">
