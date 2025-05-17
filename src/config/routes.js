@@ -5,7 +5,8 @@ import RestaurantPage from '../pages/RestaurantPage';
 import Menu from '../pages/Menu';
 import ReviewsPage from '../pages/ReviewsPage';
 import OrderHistory from '../pages/OrderHistory';
-import InventoryPage from '../pages/InventoryPage'; 
+import InventoryPage from '../pages/InventoryPage';
+import Map from '../pages/Map';
 
 export const routes = [
   { id: 'login', path: '/', name: 'Iniciar sesión', component: Login },
@@ -14,6 +15,12 @@ export const routes = [
   { id: 'menu', path: '/menu', name: 'Menú', component: Menu },
   { id: 'reviews', path: '/reviews', name: 'Reseñas', component: ReviewsPage },
   { id: 'orderhistory', path: '/history', name: 'Historial', component: OrderHistory },
-  { id: 'restaurantPage', path: '/restaurant/:restaurantId', name: 'Pagina restaurante', component: RestaurantPage },
-  { id: 'inventory', path: '/inventory', name: 'Inventario', component: InventoryPage } 
+  {
+    id: 'restaurantPage',
+    path: '/restaurant/:restaurantId', // ← Aquí se accede al ID desde la URL
+    name: 'Página restaurante',
+    component: RestaurantPage
+  },
+  { id: 'inventory', path: '/inventory', name: 'Inventario', component: InventoryPage },
+  { id: 'map', path: '/map', name: 'Mapa', component: Map }
 ];
