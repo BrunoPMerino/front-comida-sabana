@@ -6,6 +6,7 @@ import Menu from '../pages/Menu';
 import ReviewsPage from '../pages/ReviewsPage';
 import OrderHistory from '../pages/OrderHistory';
 import InventoryPage from '../pages/InventoryPage'; 
+import Map from '../pages/Map'
 
 export const routes = [
   { id: 'login', path: '/', name: 'Iniciar sesión', component: Login },
