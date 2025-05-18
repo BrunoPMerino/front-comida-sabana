@@ -88,7 +88,7 @@ export default function RestaurantPage() {
                 <span className="text-xl font-semibold">{restaurant.averageScore?.toFixed(1) || "0.0"}</span>
                 <span className="text-yellow-400">★★★★★</span>
                 <button
-                  onClick={() => navigate(`/reviews?restaurantId=${restaurant._id}`)}
+                  onClick={() => navigate(`/reviews/${restaurant._id}`)}
                   className="text-blue-700 underline text-sm"
                 >
                   Ver las reseñas
