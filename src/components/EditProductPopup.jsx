@@ -42,7 +42,7 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
     const { data: uploadUrl } = await axios.get(`${API_URL}/api/s3/get-url`);
     console.log("Upload URL:", uploadUrl);
     console.log("uploadUrl test 2: ", uploadUrl.url);
-    await axios.put(uploadUrl, imageFile, {
+    await axios.put(uploadUrl.url, imageFile, {
       headers: { "Content-Type": imageFile.type },
     });
     return uploadUrl;
