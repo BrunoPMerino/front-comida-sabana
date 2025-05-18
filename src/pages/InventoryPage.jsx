@@ -53,34 +53,35 @@ export default function InventoryPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col overflow-hidden">
       <TopNavbar />
-      <div className="px-4 pt-20 pb-28">
+      <main className="flex-1 px-4 pt-20 pb-28 overflow-y-auto">
         <h1 className="text-2xl font-bold mb-4">Inventario</h1>
-        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
+        <div className="flex flex-wrap gap-4 justify-start">
           {products.map((product) => (
             <ProductInventoryCard key={product._id} product={product} onEdit={() => handleEdit(product)} />
           ))}
           <div
             onClick={handleAddNew}
-            className="flex flex-col items-center justify-center border-2 border-black border-dashed cursor-pointer h-full aspect-square"
+            className="w-[170px] h-[220px] flex flex-col items-center justify-center border-2 border-black border-dashed cursor-pointer"
           >
-            <span className="text-4xl">+</span>
-            <span className="text-sm">Añadir producto</span>
+            <span className="text-2xl">+</span>
+            <span className="text-xs">Añadir producto</span>
           </div>
         </div>
-      </div>
+      </main>
       <MobileNavbar />
 
       {editingProduct !== null && (
-        <EditProductPopup
-          product={editingProduct}
-          onClose={() => setEditingProduct(null)}
-          onSave={handleSave}
-          isNew={isNew}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <EditProductPopup
+            product={editingProduct}
+            onClose={() => setEditingProduct(null)}
+            onSave={handleSave}
+            isNew={isNew}
+          />
+        </div>
       )}
-    </>
+    </div>
   );
 }
-
