@@ -1,11 +1,15 @@
-export default function ProductCard({ image, name, price, description }) {
+export default function ProductCard({ image, name, price, description, onClick }) {
   const validImage = image?.startsWith("http") ? image : "/placeholder.png";
 
   return (
-    <div className="bg-white rounded-md shadow p-4 flex flex-col justify-between w-[170px] h-[220px] shrink-0">
+    <div
+      className="bg-white rounded-md shadow p-4 flex flex-col justify-between w-[170px] h-[220px] shrink-0 cursor-pointer hover:shadow-lg transition"
+      onClick={onClick}
+    >
       <img
         src={validImage}
         alt={name}
+        onError={(e) => (e.target.src = "/placeholder.png")}
         className="w-full h-24 object-cover rounded-md mb-2"
       />
       <p className="text-base font-semibold truncate">{name}</p>
