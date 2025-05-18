@@ -73,7 +73,6 @@ export default function OrderCard({
             ${order.totalPrice.toLocaleString()}
           </p>
 
-          {/* Avanzar estado solo para POS */}
           {isPOS && (
             <button
               onClick={handleAdvance}
@@ -88,7 +87,6 @@ export default function OrderCard({
             </button>
           )}
 
-          {/* Cancelar pedido para POS y cliente */}
           {canCancel && (
             <button
               onClick={() => onCancel(order._id)}
