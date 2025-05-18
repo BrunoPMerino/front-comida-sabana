@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 import CartPopup from "./CartPopup";
 import axios from "axios";
@@ -12,6 +12,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const [restaurants, setRestaurants] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -47,14 +48,12 @@ export default function Sidebar({ isOpen, onClose }) {
       className={`fixed inset-0 z-50 ${isOpen ? "" : "pointer-events-none"}`}
       onClick={onClose}
     >
-      {/* Fondo oscurecido */}
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
       ></div>
 
-      {/* Contenedor de la sidebar */}
       <div
         className={`absolute top-0 left-0 h-full bg-white shadow-lg transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -66,50 +65,90 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         <div className="px-4 py-2">
-          <h2
-            className="font-bold text-md mb-2 cursor-pointer"
-            onClick={() => setExpanded(!expanded)}
-          >
-            Restaurantes <span className="ml-2">{expanded ? "▲" : "▼"}</span>
-          </h2>
-          {expanded && (
-            <ul className="pl-4 mb-4">
-              {restaurants.map((rest) => (
-                <li
-                  key={rest._id}
-                  className="mb-1 list-disc text-black hover:underline cursor-pointer"
-                  onClick={() => {
-                    navigate(`/restaurant/${rest._id}`);
-                    onClose();
-                  }}
-                >
-                  {rest.name}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Sección Restaurantes */}
+          <div className={`border-t ${!expanded ? "border-b" : ""} py-2 my-4`}>
+            <h2
+              className="font-bold text-md mb-2 cursor-pointer px-2"
+              onClick={() => setExpanded(!expanded)}
+            >
+              Restaurantes <span className="ml-2">{expanded ? "▲" : "▼"}</span>
+            </h2>
 
-          <button
-            onClick={() => {
-              navigate("/map");
-              onClose();
-            }}
-            className="w-full text-left mb-4 text-black font-semibold hover:underline"
-          >
-            Mapa
-          </button>
+            {expanded && (
+              <ul>
+                {restaurants.map((rest, index) => {
+                  const isActive =
+                    location.pathname === `/restaurant/${rest._id}`;
+                  const isFirst = index === 0;
+                  const isLast = index === restaurants.length - 1;
 
-          <button
-            onClick={() => {
-              navigate("/history");
-              onClose();
-            }}
-            className="w-full text-left mb-4 text-black font-semibold hover:underline"
-          >
-            Pedidos
-          </button>
+                  return (
+                    <li
+                      key={rest._id}
+                      className={`relative text-black px-4 py-2 cursor-pointer ${
+                        isActive
+                          ? "bg-blue-100 font-bold text-[#002c66]"
+                          : "hover:underline"
+                      }`}
+                      onClick={() => {
+                        navigate(`/restaurant/${rest._id}`);
+                        onClose();
+                      }}
+                    >
+                      {/* Línea superior corta (excepto en el primero) */}
+                      {!isFirst && (
+                        <div className="absolute top-0 left-4 w-[85%] h-px bg-black"></div>
+                      )}
 
-          <div className="mt-6">
+                      {/* Contenido */}
+                      {rest.name}
+
+                      {/* Línea inferior solo en el último restaurante */}
+                      {isLast && (
+                        <div className="absolute bottom-0 left-4 w-[85%] h-px bg-black"></div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {/* Mapa y Pedidos */}
+          <div className="border-t border-b py-2 my-4">
+            <button
+              onClick={() => {
+                navigate("/map");
+                onClose();
+              }}
+              className={`w-full text-left font-semibold px-2 py-2 cursor-pointer ${
+                location.pathname === "/map"
+                  ? "bg-blue-100 text-[#002c66] font-bold"
+                  : "text-black hover:underline"
+              }`}
+            >
+              Mapa
+            </button>
+
+            <div className="border-t my-2" />
+
+            <button
+              onClick={() => {
+                navigate("/history");
+                onClose();
+              }}
+              className={`w-full text-left font-semibold px-2 py-2 cursor-pointer ${
+                location.pathname === "/history"
+                  ? "bg-blue-100 text-[#002c66] font-bold"
+                  : "text-black hover:underline"
+              }`}
+            >
+              Pedidos
+            </button>
+          </div>
+
+          {/* Usuario y cerrar sesión */}
+          <div className="mt-6 border-t pt-4">
             <p className="text-sm font-medium">Usuario</p>
             <p className="text-sm">
               {user.name} {user.lastName}
@@ -125,18 +164,6 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
         </div>
       </div>
-
-      {/* CartPopup centrado en pantalla */}
-      {showCart && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setShowCart(false)}
-        >
-          <div onClick={(e) => e.stopPropagation()}>
-            <CartPopup onClose={() => setShowCart(false)} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
