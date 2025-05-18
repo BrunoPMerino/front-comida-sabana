@@ -38,12 +38,14 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
 
   const handleUploadImage = async () => {
     if (!imageFile) return;
-    const filename = `${Date.now()}-${imageFile.name}`;
-    const { data: uploadUrl } = await axios.get(`${API_URL}/api/s3/get-url?filename=${filename}`);
+    console.log("Uploading image:", imageFile);
+    const { data: uploadUrl } = await axios.get(`${API_URL}/api/s3/get-url`);
+    console.log("Upload URL:", uploadUrl);
+    console.log("uploadUrl test 2: ", uploadUrl.url);
     await axios.put(uploadUrl, imageFile, {
       headers: { "Content-Type": imageFile.type },
     });
-    return uploadUrl.split("?")[0];
+    return uploadUrl;
   };
 
   const handleSubmit = async () => {
@@ -51,6 +53,7 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
     try {
       let imageUrl = form.imageUrl;
       if (imageFile) {
+        console.log(imageFile);
         imageUrl = await handleUploadImage();
       }
 

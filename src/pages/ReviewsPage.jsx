@@ -25,7 +25,7 @@ export default function ReviewsPage() {
           `${API_URL}/api/reviews/${restaurantId}`
         );
       const transformed = response.data.map(r => ({
-        userName: r.userId?.name ?? "Usuario anonimo", // no viene del backend
+        userName: r.userId?.name ?? "Usuario anonimo",
         rating: r.score,             // adaptar `score` → `rating`
         comment: r.comment
       }));
