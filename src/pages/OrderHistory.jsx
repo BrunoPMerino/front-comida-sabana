@@ -1,98 +1,89 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import OrderCard from "../components/OrderCard";
 import TopNavbar from "../components/TopNavbar";
 import MobileNavbar from "../components/MobileNavbar";
+import useUserStore from "../store/useUserStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function OrderHistory() {
+  const { user } = useUserStore();
   const [orders, setOrders] = useState([]);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [error, setError] = useState("");
-  const [cancellingOrderId, setCancellingOrderId] = useState(null);
 
-  const navigate = useNavigate();
+  const isPOS = user?.role === "pos";
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/orders/mine`, {
-          withCredentials: true,
-        });
+        const endpoint = isPOS
+          ? `${API_URL}/api/orders/restaurant/${user.restaurantId}`
+          : `${API_URL}/api/orders/mine`;
+
+        const response = await axios.get(endpoint, { withCredentials: true });
         setOrders(response.data);
       } catch (error) {
         console.error("Error al obtener los pedidos:", error);
-        setError("No se pudieron cargar los pedidos.");
-        setTimeout(() => setError(""), 3000);
       }
     };
 
-    fetchOrders();
-  }, []);
+    if (user) fetchOrders();
+  }, [user, isPOS]);
 
   const formatTime = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleString("es-CO", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
+      weekday: "short",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: true,
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
     });
   };
 
   const handleCancel = async (orderId) => {
-    setCancellingOrderId(orderId);
     try {
-      await axios.patch(`${API_URL}/api/orders/cancel/${orderId}`, {}, {
-        withCredentials: true,
-      });
-
-      setOrders((prevOrders) =>
-        prevOrders.map((o) =>
-          o._id === orderId ? { ...o, status: "cancelled" } : o
-        )
+      await axios.patch(
+        `${API_URL}/api/orders/cancel/${orderId}`,
+        {},
+        { withCredentials: true }
       );
-
-      setSuccessMessage("Pedido cancelado con éxito.");
-      setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (error) {
-      console.error("Error al cancelar el pedido:", error.response?.data || error.message);
-      setError("Hubo un error al cancelar el pedido.");
-      setTimeout(() => setError(""), 3000);
-    } finally {
-      setCancellingOrderId(null);
+      setOrders((prev) =>
+        prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
+      );
+    } catch (err) {
+      console.error("Error cancelando pedido:", err);
     }
   };
 
-  // Clasificación de pedidos
-  const activeOrders = orders.filter((o) => o.status === "pending");
+  const handleAdvance = () => {
+    // Simple reload after advancing status
+    if (user) {
+      const endpoint = isPOS
+        ? `${API_URL}/api/orders/restaurant/${user.restaurantId}`
+        : `${API_URL}/api/orders/mine`;
+
+      axios
+        .get(endpoint, { withCredentials: true })
+        .then((res) => setOrders(res.data))
+        .catch((err) => console.error(err));
+    }
+  };
+
+  const activeOrders = orders.filter(
+    (o) => !["delivered", "cancelled"].includes(o.status)
+  );
+  const completedOrders = orders.filter((o) => o.status === "delivered");
   const cancelledOrders = orders.filter((o) => o.status === "cancelled");
-  const pastOrders = orders.filter((o) => o.status !== "pending" && o.status !== "cancelled");
 
   return (
     <>
       <TopNavbar />
       <div className="px-4 pt-20 pb-28">
-
-        <h1 className="text-3xl font-bold mb-8 text-[#002c66]">Historial de pedidos</h1>
-
-        {/* 🟢 Mensaje de éxito */}
-        {successMessage && (
-          <div className="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 font-semibold">
-            {successMessage}
-          </div>
-        )}
-
-        {/* 🔴 Mensaje de error */}
-        {error && (
-          <div className="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 font-semibold">
-            {error}
-          </div>
-        )}
+        <h1 className="text-3xl font-bold mb-8 text-[#002c66]">
+          {isPOS ? "Órdenes del restaurante" : "Historial de pedidos"}
+        </h1>
 
         {/* En curso */}
         <h2 className="text-lg font-semibold mb-2">En curso</h2>
@@ -105,9 +96,10 @@ export default function OrderHistory() {
                 key={order._id}
                 order={order}
                 isActive={true}
+                userRole={user.role}
                 onCancel={handleCancel}
+                onAdvance={handleAdvance}
                 formatTime={formatTime}
-                isCancelling={cancellingOrderId === order._id}
               />
             ))
           )}
@@ -115,14 +107,15 @@ export default function OrderHistory() {
 
         {/* Finalizados */}
         <h2 className="text-lg font-semibold mb-2">Finalizados</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {pastOrders.length === 0 ? (
+        <div className="space-y-4 mb-6">
+          {completedOrders.length === 0 ? (
             <p className="text-gray-500">Sin historial de pedidos.</p>
           ) : (
-            pastOrders.map((order) => (
+            completedOrders.map((order) => (
               <OrderCard
                 key={order._id}
                 order={order}
+                userRole={user.role}
                 formatTime={formatTime}
               />
             ))
@@ -130,15 +123,16 @@ export default function OrderHistory() {
         </div>
 
         {/* Cancelados */}
-        <h2 className="text-lg font-semibold mb-2 mt-8">Cancelados</h2>
-        <div className="grid md:grid-cols-2 gap-4">
+        <h2 className="text-lg font-semibold mb-2">Cancelados</h2>
+        <div className="space-y-4">
           {cancelledOrders.length === 0 ? (
-            <p className="text-gray-500">No hay pedidos cancelados.</p>
+            <p className="text-gray-500">Sin pedidos cancelados.</p>
           ) : (
             cancelledOrders.map((order) => (
               <OrderCard
                 key={order._id}
                 order={order}
+                userRole={user.role}
                 formatTime={formatTime}
               />
             ))
