@@ -38,14 +38,13 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
 
   const handleUploadImage = async () => {
     if (!imageFile) return;
-    console.log("Uploading image:", imageFile);
     const { data: uploadUrl } = await axios.get(`${API_URL}/api/s3/get-url`);
-    console.log("Upload URL:", uploadUrl);
-    console.log("uploadUrl test 2: ", uploadUrl.url);
-    await axios.put(uploadUrl.url, imageFile, {
+    const parsedUrl = uploadUrl.url;
+    await axios.put(parsedUrl, imageFile, {
       headers: { "Content-Type": imageFile.type },
+      withCredentials: false, // Explicitly tell axios not to include credentials
     });
-    return uploadUrl;
+    return parsedUrl;
   };
 
   const handleSubmit = async () => {
