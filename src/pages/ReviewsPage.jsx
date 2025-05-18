@@ -9,6 +9,7 @@ import MobileNavbar from "../components/MobileNavbar";
 export default function ReviewsPage() {
   const { restaurantId } = useParams();
   const [reviews, setReviews] = useState([]);
+  const [restaurantName, setRestaurantName] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
@@ -21,15 +22,15 @@ export default function ReviewsPage() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/api/reviews/${restaurantId}`
-        );
-      const transformed = response.data.map(r => ({
+        const response = await axios.get(`${API_URL}/api/reviews/${restaurantId}`);
+        const restaurantRes = await axios.get(`${API_URL}/api/restaurants/${restaurantId}`);
+        const transformed = response.data.map(r => ({
         userName: r.userId?.name ?? "Usuario anonimo",
         rating: r.score,             // adaptar `score` → `rating`
         comment: r.comment
       }));
         setReviews(transformed);
+        setRestaurantName(restaurantRes.data.name)
       } catch (error) {
         console.error("Error al obtener reseñas:", error);
       }
@@ -49,7 +50,7 @@ export default function ReviewsPage() {
             </button>
             <h1 className="text-3xl font-bold mb-8 text-[#002c66]">
               <span className="md:hidden">Reseñas</span>
-              <span className="hidden md:inline">Reseñas de Embarcadero</span>
+              <span className="hidden md:inline">Reseñas de {restaurantName}</span>
             </h1>
           </div>
         </div>
