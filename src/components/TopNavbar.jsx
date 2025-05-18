@@ -1,12 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaShoppingCart, FaUser } from "react-icons/fa";
-import useUserStore from "../store/useUserStore";
 import CartPopup from "./CartPopup";
-import Sidebar from "./Sidebar";
+import UserInfoPopup from "./UserInfoPopup";
 
 export default function TopNavbar() {
-  const { user, logout } = useUserStore();
   const [showPopup, setShowPopup] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -49,27 +47,7 @@ export default function TopNavbar() {
           </div>
         </div>
       </div>
-
-      {showPopup && (
-        <>
-          <div className="fixed inset-0 bg-black opacity-60 z-40"></div>
-          <div
-            ref={popupRef}
-            className="fixed top-20 left-4 right-4 mx-auto bg-white p-4 rounded-md shadow-lg z-50 md:hidden"
-          >
-            <h2 className="font-bold text-lg mb-2">Información del usuario</h2>
-            <p className="text-md font-medium">{user?.name} {user?.lastName}</p>
-            <p className="text-sm text-gray-600 mb-4">{user?.email}</p>
-            <button
-              onClick={logout}
-              className="bg-red-600 text-white font-semibold w-full py-2 rounded hover:bg-red-700"
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </>
-      )}
-
+      <UserInfoPopup showPopup={showPopup} setShowPopup={setShowPopup} />      
       {showCart && <CartPopup onClose={() => setShowCart(false)} />}
       {showSidebar && <Sidebar isOpen={true} onClose={() => setShowSidebar(false)} />}
     </header>

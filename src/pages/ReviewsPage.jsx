@@ -14,7 +14,7 @@ export default function ReviewsPage() {
   const user = useUserStore((state) => state.user);
   useEffect(() => {
   if (!user) {
-    navigate("/login");
+    navigate("/");
     }
   }, [user, navigate]);
 
