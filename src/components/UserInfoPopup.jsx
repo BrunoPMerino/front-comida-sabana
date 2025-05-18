@@ -2,13 +2,26 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 import { FaUser } from "react-icons/fa";
+import axios from "axios"
 
 export default function UserInfoPopup() {
   const { user, logout } = useUserStore();
   const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate(); // <-- hook para redirigir
+  const navigate = useNavigate(); 
+  const API_URL = import.meta.env.VITE_API_URL;
 
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+      logout(); // <- limpia el store
+      setShowPopup(false);
+      navigate("/login");
+    } catch (err) {
+      console.error("Error cerrando sesión:", err);
+    }
+  };
   if (!user) return null;
+
 
   return (
     <div className="md:hidden fixed top-4 right-4 z-50">
@@ -26,11 +39,7 @@ export default function UserInfoPopup() {
             <p className="text-md font-bold mb-1">{user.name} {user.lastName}</p>
             <p className="text-sm text-gray-700 mb-4">{user.email}</p>
             <button
-              onClick={() => {
-                logout();
-                setShowPopup(false);
-                navigate("/login"); // <-- redirige a login
-              }}
+              onClick={handleLogout}
               className="bg-red-600 text-white w-full py-2 rounded font-semibold"
             >
               Cerrar sesión

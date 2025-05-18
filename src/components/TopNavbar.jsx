@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaBars, FaShoppingCart, FaUser } from "react-icons/fa";
 import useUserStore from "../store/useUserStore";
 import CartPopup from "./CartPopup";
+import UserInfoPopup from "./UserInfoPopup";
 
 export default function TopNavbar() {
   const { user, logout } = useUserStore();
