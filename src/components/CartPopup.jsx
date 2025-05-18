@@ -6,15 +6,17 @@ import { useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import SuccessPopup from "./SuccessPopup";
+import useUserStore from "../store/useUserStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function CartPopup({ onClose }) {
   const { cartItems, addToCart, removeFromCart, clearCart } = useCartStore();
+  const { user } = useUserStore();
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [reservationDate, setReservationDate] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   const subtotal = cartItems.reduce(
@@ -34,34 +36,22 @@ export default function CartPopup({ onClose }) {
     addToCart({ ...item, quantity: 1 });
   };
 
+  const getFutureDate = () => {
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 10);
+    return now.toISOString();
+  };
+
   const handleSubmitOrder = async () => {
-    setErrorMessage("");
-
-    if (cartItems.length === 0) {
-      setErrorMessage("Tu carrito está vacío.");
-      return;
-    }
-
-    const allSameRestaurant = cartItems.every(
-      (item) => item.restaurantId === cartItems[0].restaurantId
-    );
-
-    if (!allSameRestaurant) {
-      setErrorMessage("Solo puedes agregar productos de un mismo restaurante.");
-      return;
-    }
-
-    if (!reservationDate) {
-      setErrorMessage("Por favor selecciona una fecha y hora para la reserva.");
-      return;
-    }
+    setErrorMsg("");
+    if (cartItems.length === 0) return;
 
     try {
       const response = await axios.post(
         `${API_URL}/api/orders/client`,
         {
           restaurantId: cartItems[0].restaurantId,
-          reservationDate: new Date(reservationDate).toISOString(),
+          reservationDate: getFutureDate(),
           products: cartItems.map((item) => ({
             productId: item._id,
             quantity: item.quantity,
@@ -70,13 +60,45 @@ export default function CartPopup({ onClose }) {
         { withCredentials: true }
       );
 
-      console.log("Pedido realizado:", response.data);
       clearCart();
       setShowSuccessPopup(true);
       setCountdown(3);
     } catch (error) {
       console.error("Error al finalizar el pedido:", error.response?.data || error.message);
-      setErrorMessage("Hubo un problema al procesar tu pedido. Intenta de nuevo.");
+      setErrorMsg("No se pudo realizar el pedido. Inténtalo nuevamente.");
+    }
+  };
+
+  const handlePOSOrder = async () => {
+    setErrorMsg("");
+
+    if (!customerName.trim()) {
+      setErrorMsg("Debes ingresar el nombre del cliente.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/orders/pos`,
+        {
+          name: customerName,
+          restaurantId: cartItems[0].restaurantId,
+          reservationDate: getFutureDate(),
+          products: cartItems.map((item) => ({
+            productId: item._id,
+            quantity: item.quantity,
+          })),
+        },
+        { withCredentials: true }
+      );
+
+      clearCart();
+      setCustomerName("");
+      setShowSuccessPopup(true);
+      setCountdown(3);
+    } catch (error) {
+      console.error("Error creando pedido POS:", error.response?.data || error.message);
+      setErrorMsg("No se pudo crear el pedido POS.");
     }
   };
 
@@ -98,10 +120,6 @@ export default function CartPopup({ onClose }) {
 
         <h2 className="text-xl font-bold mb-4">Carrito de compras</h2>
 
-        {errorMessage && (
-          <p className="text-red-600 mb-4 font-semibold">{errorMessage}</p>
-        )}
-
         {cartItems.length === 0 ? (
           <p className="text-gray-500">Tu carrito está vacío.</p>
         ) : (
@@ -116,19 +134,25 @@ export default function CartPopup({ onClose }) {
               />
             ))}
 
-            <div className="mt-4">
-              <label className="block text-sm font-semibold mb-1">
-                Fecha y hora de reserva:
-              </label>
+            {user?.role === "pos" && (
               <input
-                type="datetime-local"
-                className="w-full border rounded px-3 py-2 text-sm"
-                value={reservationDate}
-                onChange={(e) => setReservationDate(e.target.value)}
+                type="text"
+                placeholder="Nombre del cliente"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="border px-3 py-2 rounded w-full mb-2"
               />
-            </div>
+            )}
 
-            <CartSummary subtotal={subtotal} onSubmit={handleSubmitOrder} />
+            {errorMsg && (
+              <p className="text-red-600 text-sm font-medium mb-2">{errorMsg}</p>
+            )}
+
+            <CartSummary
+              subtotal={subtotal}
+              onSubmit={user?.role === "pos" ? handlePOSOrder : handleSubmitOrder}
+              submitLabel={user?.role === "pos" ? "Crear pedido POS" : "Finalizar pedido"}
+            />
           </div>
         )}
 
