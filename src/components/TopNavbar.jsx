@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaShoppingCart, FaUser } from "react-icons/fa";
 import CartPopup from "./CartPopup";
 import UserInfoPopup from "./UserInfoPopup";
@@ -7,6 +7,7 @@ import UserInfoPopup from "./UserInfoPopup";
 export default function TopNavbar() {
   const [showPopup, setShowPopup] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const popupRef = useRef();
 
   const togglePopup = () => setShowPopup(!showPopup);
@@ -25,8 +26,8 @@ export default function TopNavbar() {
   return (
     <header className="fixed top-0 left-0 w-full bg-white z-50 shadow border-b">
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Botón de menú (desktop/tablet) */}
-        <div className="hidden md:block mr-4">
+        {/* Botón de menú (solo tablet/desktop) */}
+        <div className="hidden md:block mr-4 cursor-pointer" onClick={() => setShowSidebar(true)}>
           <FaBars className="text-xl text-[#002c66]" />
         </div>
 
@@ -48,7 +49,7 @@ export default function TopNavbar() {
       </div>
       <UserInfoPopup showPopup={showPopup} setShowPopup={setShowPopup} />      
       {showCart && <CartPopup onClose={() => setShowCart(false)} />}
+      {showSidebar && <Sidebar isOpen={true} onClose={() => setShowSidebar(false)} />}
     </header>
   );
 }
-

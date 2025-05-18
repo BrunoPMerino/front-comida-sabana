@@ -85,8 +85,8 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-      <div className="bg-white w-full max-w-md rounded-xl p-6 relative overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+      <div className="bg-white w-full max-w-md max-h-[66vh] overflow-y-auto rounded-xl p-6 relative">
         <button onClick={onClose} className="absolute top-4 right-4">
           <FaTimes className="text-2xl text-blue-900" />
         </button>
@@ -106,68 +106,83 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
           <FaCamera className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl text-gray-500" />
         </div>
 
-        <input
-          type="text"
-          placeholder="Título"
-          value={form.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-          className="w-full border rounded p-2 mb-2"
-        />
-
-        <textarea
-          placeholder="Descripción"
-          value={form.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-          className="w-full border rounded p-2 mb-2 text-sm"
-        />
-
-        <div className="flex gap-2 mb-2">
-          <input
-            type="number"
-            placeholder="Precio"
-            value={form.price}
-            onChange={(e) => handleChange("price", parseInt(e.target.value) || 0)}
-            className="flex-1 border rounded p-2"
-          />
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-1">Título</label>
           <input
             type="text"
-            placeholder="Categorías"
-            value={form.categories}
-            onChange={(e) => handleChange("categories", e.target.value)}
-            className="flex-1 border rounded p-2"
+            value={form.name}
+            onChange={(e) => handleChange("name", e.target.value)}
+            className="w-full border rounded p-2 text-sm"
           />
         </div>
 
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex gap-2">
-            <button
-              className={`border px-3 py-1 rounded ${form.available ? "bg-blue-600 text-white" : ""}`}
-              onClick={() => handleChange("available", true)}
-            >
-              Disponible
-            </button>
-            <button
-              className={`border px-3 py-1 rounded ${!form.available ? "bg-blue-600 text-white" : ""}`}
-              onClick={() => handleChange("available", false)}
-            >
-              Oculto
-            </button>
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-1">Descripción</label>
+          <textarea
+            value={form.description}
+            onChange={(e) => handleChange("description", e.target.value)}
+            className="w-full border rounded p-2 text-sm"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Precio</label>
+            <input
+              type="number"
+              value={form.price}
+              onChange={(e) => handleChange("price", parseInt(e.target.value) || 0)}
+              className="w-full border rounded p-2 text-sm"
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => handleChange("quantity", Math.max(0, form.quantity - 1))} className="border px-2 rounded">
-              <FaMinus />
-            </button>
-            <span>{form.quantity}</span>
-            <button onClick={() => handleChange("quantity", form.quantity + 1)} className="border px-2 rounded">
-              <FaPlus />
-            </button>
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Categorías</label>
+            <input
+              type="text"
+              value={form.categories}
+              onChange={(e) => handleChange("categories", e.target.value)}
+              className="w-full border rounded p-2 text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
+          <div className="w-full sm:w-1/2">
+            <label className="block text-sm font-medium mb-1">Disponibilidad</label>
+            <div className="flex gap-2">
+              <button
+                className={`flex-1 border px-3 py-1 rounded text-sm ${form.available ? "bg-blue-600 text-white" : ""}`}
+                onClick={() => handleChange("available", true)}
+              >
+                Disponible
+              </button>
+              <button
+                className={`flex-1 border px-3 py-1 rounded text-sm ${!form.available ? "bg-blue-600 text-white" : ""}`}
+                onClick={() => handleChange("available", false)}
+              >
+                Oculto
+              </button>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-1/2">
+            <label className="block text-sm font-medium mb-1">Cantidad</label>
+            <div className="flex items-center gap-2 justify-between">
+              <button onClick={() => handleChange("quantity", Math.max(0, form.quantity - 1))} className="border px-2 rounded">
+                <FaMinus />
+              </button>
+              <span>{form.quantity}</span>
+              <button onClick={() => handleChange("quantity", form.quantity + 1)} className="border px-2 rounded">
+                <FaPlus />
+              </button>
+            </div>
           </div>
         </div>
 
         {!isNew && (
           <button
             onClick={handleDelete}
-            className="w-full py-2 rounded bg-red-600 text-white font-bold mb-2 flex items-center justify-center gap-2"
+            className="w-full py-2 rounded bg-red-600 text-white font-bold mb-2 flex items-center justify-center gap-2 text-sm"
           >
             <FaTrash /> Eliminar
           </button>
@@ -176,7 +191,7 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
         <button
           disabled={loading}
           onClick={handleSubmit}
-          className="w-full py-2 rounded bg-[#002c66] text-white font-bold hover:bg-[#001a4d]"
+          className="w-full py-2 rounded bg-[#002c66] text-white font-bold hover:bg-[#001a4d] text-sm"
         >
           {loading ? "Guardando..." : "Guardar cambios"}
         </button>
@@ -184,4 +199,3 @@ export default function EditProductPopup({ product, onClose, onSave, isNew = fal
     </div>
   );
 }
-
