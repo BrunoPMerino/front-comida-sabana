@@ -27,18 +27,20 @@ export default function TopNavbar() {
   return (
     <header className="fixed top-0 left-0 w-full bg-white z-50 shadow border-b">
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Botón de menú (solo tablet/desktop) */}
-        <div className="hidden md:block mr-4 cursor-pointer" onClick={() => setShowSidebar(true)}>
+        <div
+          className="hidden md:block mr-4 cursor-pointer"
+          onClick={() => setShowSidebar(true)}
+        >
           <FaBars className="text-xl text-[#002c66]" />
         </div>
 
-        {/* Logo + título */}
-        <div className="flex items-center gap-2">
+        <Link to="/home" className="flex items-center gap-2 hover:underline">
           <img src="/Unisabana-logo.png" alt="Logo" className="h-6 md:h-8" />
-          <span className="font-bold text-[#002c66] text-sm md:text-lg">Comida Sabana</span>
-        </div>
+          <span className="font-bold text-[#002c66] text-sm md:text-lg">
+            Comida Sabana
+          </span>
+        </Link>
 
-        {/* Íconos */}
         <div className="flex items-center gap-4 ml-auto">
           <div className="block md:hidden" onClick={togglePopup}>
             <FaUser className="text-xl text-[#002c66]" />
@@ -48,9 +50,11 @@ export default function TopNavbar() {
           </div>
         </div>
       </div>
-      <UserInfoPopup showPopup={showPopup} setShowPopup={setShowPopup} />      
+      <UserInfoPopup showPopup={showPopup} setShowPopup={setShowPopup} />
       {showCart && <CartPopup onClose={() => setShowCart(false)} />}
-      {showSidebar && <Sidebar isOpen={true} onClose={() => setShowSidebar(false)} />}
+      {showSidebar && (
+        <Sidebar isOpen={true} onClose={() => setShowSidebar(false)} />
+      )}
     </header>
   );
 }
