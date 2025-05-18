@@ -13,6 +13,8 @@ export default function CartPopup({ onClose }) {
   const { cartItems, addToCart, removeFromCart, clearCart } = useCartStore();
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [reservationDate, setReservationDate] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const subtotal = cartItems.reduce(
@@ -33,14 +35,33 @@ export default function CartPopup({ onClose }) {
   };
 
   const handleSubmitOrder = async () => {
-    if (cartItems.length === 0) return;
+    setErrorMessage("");
+
+    if (cartItems.length === 0) {
+      setErrorMessage("Tu carrito está vacío.");
+      return;
+    }
+
+    const allSameRestaurant = cartItems.every(
+      (item) => item.restaurantId === cartItems[0].restaurantId
+    );
+
+    if (!allSameRestaurant) {
+      setErrorMessage("Solo puedes agregar productos de un mismo restaurante.");
+      return;
+    }
+
+    if (!reservationDate) {
+      setErrorMessage("Por favor selecciona una fecha y hora para la reserva.");
+      return;
+    }
 
     try {
       const response = await axios.post(
         `${API_URL}/api/orders/client`,
         {
           restaurantId: cartItems[0].restaurantId,
-          reservationDate: "2026-05-03T14:30:00Z",
+          reservationDate: new Date(reservationDate).toISOString(),
           products: cartItems.map((item) => ({
             productId: item._id,
             quantity: item.quantity,
@@ -55,6 +76,7 @@ export default function CartPopup({ onClose }) {
       setCountdown(3);
     } catch (error) {
       console.error("Error al finalizar el pedido:", error.response?.data || error.message);
+      setErrorMessage("Hubo un problema al procesar tu pedido. Intenta de nuevo.");
     }
   };
 
@@ -76,6 +98,10 @@ export default function CartPopup({ onClose }) {
 
         <h2 className="text-xl font-bold mb-4">Carrito de compras</h2>
 
+        {errorMessage && (
+          <p className="text-red-600 mb-4 font-semibold">{errorMessage}</p>
+        )}
+
         {cartItems.length === 0 ? (
           <p className="text-gray-500">Tu carrito está vacío.</p>
         ) : (
@@ -89,6 +115,18 @@ export default function CartPopup({ onClose }) {
                 onRemove={() => removeFromCart(item._id)}
               />
             ))}
+
+            <div className="mt-4">
+              <label className="block text-sm font-semibold mb-1">
+                Fecha y hora de reserva:
+              </label>
+              <input
+                type="datetime-local"
+                className="w-full border rounded px-3 py-2 text-sm"
+                value={reservationDate}
+                onChange={(e) => setReservationDate(e.target.value)}
+              />
+            </div>
 
             <CartSummary subtotal={subtotal} onSubmit={handleSubmitOrder} />
           </div>
