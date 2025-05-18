@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaShoppingCart, FaUser } from "react-icons/fa";
 import CartPopup from "./CartPopup";
 import UserInfoPopup from "./UserInfoPopup";
+import Sidebar from "./Sidebar";
 
 export default function TopNavbar() {
   const [showPopup, setShowPopup] = useState(false);

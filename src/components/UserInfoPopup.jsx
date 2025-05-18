@@ -24,7 +24,7 @@ export default function UserInfoPopup({ showPopup, setShowPopup }) {
       await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
       logout();
       setShowPopup(false);
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       console.error("Error cerrando sesión:", err);
     }
