@@ -125,8 +125,8 @@ export default function RestaurantPage() {
                   </span>
                   <span className="text-yellow-400">★★★★★</span>
                   <button
-                    onClick={() =>
-                      navigate(`/reviews/${restaurantInfo._id}`)
+                    onClick={() => {
+                      navigate(`/reviews/${restaurantInfo._id}`, {state: { restaurantName: restaurantInfo.name }});}
                     }
                     className="text-blue-700 underline text-sm"
                   >

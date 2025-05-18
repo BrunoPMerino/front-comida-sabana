@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaArrowLeft, FaStar } from "react-icons/fa";
 import useUserStore from "../store/useUserStore";
@@ -9,9 +9,11 @@ import MobileNavbar from "../components/MobileNavbar";
 export default function ReviewsPage() {
   const { restaurantId } = useParams();
   const [reviews, setReviews] = useState([]);
-  const [restaurantName, setRestaurantName] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const location = useLocation();
+  const passedName = location.state?.restaurantName || "";
+  const [restaurantName, setRestaurantName] = useState(passedName);
   const user = useUserStore((state) => state.user);
   useEffect(() => {
   if (!user) {
@@ -23,14 +25,12 @@ export default function ReviewsPage() {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/reviews/${restaurantId}`);
-        const restaurantRes = await axios.get(`${API_URL}/api/restaurants/${restaurantId}`);
         const transformed = response.data.map(r => ({
         userName: r.userId?.name ?? "Usuario anonimo",
         rating: r.score,             // adaptar `score` → `rating`
         comment: r.comment
       }));
         setReviews(transformed);
-        setRestaurantName(restaurantRes.data.name)
       } catch (error) {
         console.error("Error al obtener reseñas:", error);
       }
