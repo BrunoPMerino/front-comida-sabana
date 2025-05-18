@@ -13,14 +13,10 @@ export const routes = [
   { id: 'register', path: '/register', name: 'Registro', component: Register },
   { id: 'home', path: '/home', name: 'Menú principal', component: Home },
   { id: 'menu', path: '/menu', name: 'Menú', component: Menu },
-  { id: 'reviews', path: '/reviews', name: 'Reseñas', component: ReviewsPage },
+  //{ id: 'reviews', path: '/reviews', name: 'Reseñas', component: ReviewsPage },
+  { id: 'reviews', path: '/reviews/:restaurantId', name: 'Reseñas del restaurante', component: ReviewsPage },
   { id: 'orderhistory', path: '/history', name: 'Historial', component: OrderHistory },
-  {
-    id: 'restaurantPage',
-    path: '/restaurant/:restaurantId', // ← Aquí se accede al ID desde la URL
-    name: 'Página restaurante',
-    component: RestaurantPage
-  },
+  { id: 'restaurantPage', path: '/restaurant/:restaurantId', name: 'Página restaurante', component: RestaurantPage },
   { id: 'inventory', path: '/inventory', name: 'Inventario', component: InventoryPage },
   { id: 'map', path: '/map', name: 'Mapa', component: Map }
 ];
