@@ -2,7 +2,6 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Home from '../pages/Home';
 import RestaurantPage from '../pages/RestaurantPage';
-import Menu from '../pages/Menu';
 import ReviewsPage from '../pages/ReviewsPage';
 import OrderHistory from '../pages/OrderHistory';
 import InventoryPage from '../pages/InventoryPage';
@@ -12,8 +11,6 @@ export const routes = [
   { id: 'login', path: '/', name: 'Iniciar sesión', component: Login },
   { id: 'register', path: '/register', name: 'Registro', component: Register },
   { id: 'home', path: '/home', name: 'Menú principal', component: Home },
-  { id: 'menu', path: '/menu', name: 'Menú', component: Menu },
-  //{ id: 'reviews', path: '/reviews', name: 'Reseñas', component: ReviewsPage },
   { id: 'reviews', path: '/reviews/:restaurantId', name: 'Reseñas del restaurante', component: ReviewsPage },
   { id: 'orderhistory', path: '/history', name: 'Historial', component: OrderHistory },
   { id: 'restaurantPage', path: '/restaurant/:restaurantId', name: 'Página restaurante', component: RestaurantPage },
