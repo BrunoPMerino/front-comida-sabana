@@ -5,13 +5,14 @@ import TopNavbar from "../components/TopNavbar";
 import MobileNavbar from "../components/MobileNavbar";
 import ProductCard from "../components/ProductCard";
 import ProductPopup from "../components/ProductPopup";
+import useUserStore from "../store/useUserStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function RestaurantPage() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
-
+  const { user } = useUserStore();
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -21,6 +22,13 @@ export default function RestaurantPage() {
 
   // 🔄 Fetch de productos y restaurante
   useEffect(() => {
+    if (user === undefined) return;
+
+    if (!user) {
+      navigate("/");
+      return;
+    }
+    
     const fetchData = async () => {
       try {
         const [productRes, restaurantRes] = await Promise.all([

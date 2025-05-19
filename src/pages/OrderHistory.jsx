@@ -4,16 +4,31 @@ import OrderCard from "../components/OrderCard";
 import TopNavbar from "../components/TopNavbar";
 import MobileNavbar from "../components/MobileNavbar";
 import useUserStore from "../store/useUserStore";
+import { useNavigate } from "react-router-dom";
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function OrderHistory() {
   const { user } = useUserStore();
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
+  
+
 
   const isPOS = user?.role === "pos";
 
+
+
+  
   useEffect(() => {
+    if (user === undefined) return;
+
+    if (!user) {
+      navigate("/");
+      return;
+    }
+
     const fetchOrders = async () => {
       try {
         const endpoint = isPOS
