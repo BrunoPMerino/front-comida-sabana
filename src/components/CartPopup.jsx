@@ -16,6 +16,7 @@ export default function CartPopup({ onClose }) {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [customerName, setCustomerName] = useState("");
+  const [customReservation, setCustomReservation] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
@@ -36,7 +37,7 @@ export default function CartPopup({ onClose }) {
     addToCart({ ...item, quantity: 1 });
   };
 
-  const getFutureDate = () => {
+  const getDefaultReservation = () => {
     const now = new Date();
     now.setSeconds(now.getSeconds() + 10);
     return now.toISOString();
@@ -51,7 +52,7 @@ export default function CartPopup({ onClose }) {
         `${API_URL}/api/orders/client`,
         {
           restaurantId: cartItems[0].restaurantId,
-          reservationDate: getFutureDate(),
+          reservationDate: customReservation || getDefaultReservation(),
           products: cartItems.map((item) => ({
             productId: item._id,
             quantity: item.quantity,
@@ -83,7 +84,7 @@ export default function CartPopup({ onClose }) {
         {
           name: customerName,
           restaurantId: cartItems[0].restaurantId,
-          reservationDate: getFutureDate(),
+          reservationDate: getDefaultReservation(),
           products: cartItems.map((item) => ({
             productId: item._id,
             quantity: item.quantity,
@@ -104,15 +105,12 @@ export default function CartPopup({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center bg-black/50">
-      {/* Clic fuera cierra el popup */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Contenido del popup */}
       <div
         className="relative z-10 w-full max-h-[85vh] sm:max-w-sm md:max-w-xl md:h-auto bg-white rounded-t-2xl md:rounded-xl p-6 overflow-y-auto mx-auto mt-6 sm:mt-0"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Botón de cerrar */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white md:text-gray-600 bg-blue-900 md:bg-transparent p-1 rounded-full"
@@ -120,7 +118,6 @@ export default function CartPopup({ onClose }) {
           <FaTimes className="w-4 h-4" />
         </button>
 
-        {/* Título */}
         <h2 className="text-xl font-bold mb-4">Carrito de compras</h2>
 
         {cartItems.length === 0 ? (
@@ -137,6 +134,7 @@ export default function CartPopup({ onClose }) {
               />
             ))}
 
+            {/* Campo POS: nombre del cliente */}
             {user?.role === "pos" && (
               <input
                 type="text"
@@ -145,6 +143,21 @@ export default function CartPopup({ onClose }) {
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="border px-3 py-2 rounded w-full mb-2"
               />
+            )}
+
+            {/* Campo Cliente: fecha/hora de reserva */}
+            {user?.role === "client" && (
+              <div className="mb-2">
+                <label className="block text-sm font-medium mb-1">
+                  Selecciona la hora de entrega:
+                </label>
+                <input
+                  type="datetime-local"
+                  value={customReservation}
+                  onChange={(e) => setCustomReservation(e.target.value)}
+                  className="border px-3 py-2 rounded w-full"
+                />
+              </div>
             )}
 
             {errorMsg && (

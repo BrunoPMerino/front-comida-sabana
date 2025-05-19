@@ -6,9 +6,8 @@ export default function OrderCard({
   order,
   isActive = false,
   formatTime,
-  onCancel,
+  onAdvance,
   userRole,
-  onAdvance
 }) {
   const isPOS = userRole === "pos";
 
@@ -18,9 +17,7 @@ export default function OrderCard({
     order.status !== "delivered" &&
     order.status !== "cancelled";
 
-  const canCancel =
-    ["pending", "confirmed", "preparing"].includes(order.status) &&
-    typeof onCancel === "function";
+  const canCancel = ["pending", "confirmed", "preparing"].includes(order.status);
 
   const handleAdvance = async () => {
     const currentIndex = statusFlow.indexOf(order.status);
@@ -36,6 +33,19 @@ export default function OrderCard({
       if (onAdvance) onAdvance();
     } catch (error) {
       console.error("Error avanzando estado:", error.response?.data || error.message);
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/orders/${order._id}/status`,
+        { status: "cancelled" },
+        { withCredentials: true }
+      );
+      if (onAdvance) onAdvance();
+    } catch (error) {
+      console.error("Error cancelando pedido:", error.response?.data || error.message);
     }
   };
 
@@ -55,7 +65,8 @@ export default function OrderCard({
         <ul className="text-sm list-disc list-inside">
           {order.products.map((p, idx) => (
             <li key={idx}>
-              {p.productId?.name || "Producto eliminado"}
+              {(p.productId?.name || "Producto eliminado") +
+                (p.quantity ? ` x${p.quantity}` : "")}
             </li>
           ))}
         </ul>
@@ -89,7 +100,7 @@ export default function OrderCard({
 
           {canCancel && (
             <button
-              onClick={() => onCancel(order._id)}
+              onClick={handleCancel}
               className="mt-2 ml-2 text-sm border border-red-600 text-red-600 px-3 py-1 rounded hover:bg-red-100 transition"
             >
               Cancelar

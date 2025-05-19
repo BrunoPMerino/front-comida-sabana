@@ -68,7 +68,7 @@ export default function RestaurantList() {
             <RestaurantHeader
               name={entry.restaurant.name}
               rating={entry.restaurant.averageScore}
-              deliveryTime={entry.restaurant.estimatedTime}
+              deliveryTime={Number(entry.restaurant.estimatedTime).toFixed(1)}
               restaurantId={entry.restaurant._id}
             />
             <div className="flex gap-4 overflow-x-auto pb-2">
