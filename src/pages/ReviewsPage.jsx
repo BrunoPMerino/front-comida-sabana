@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaArrowLeft, FaStar } from "react-icons/fa";
 import useUserStore from "../store/useUserStore";
@@ -11,6 +11,9 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const location = useLocation();
+  const passedName = location.state?.restaurantName || "";
+  const [restaurantName, setRestaurantName] = useState(passedName);
   const user = useUserStore((state) => state.user);
   useEffect(() => {
   if (!user) {
@@ -21,10 +24,8 @@ export default function ReviewsPage() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/api/reviews/${restaurantId}`
-        );
-      const transformed = response.data.map(r => ({
+        const response = await axios.get(`${API_URL}/api/reviews/${restaurantId}`);
+        const transformed = response.data.map(r => ({
         userName: r.userId?.name ?? "Usuario anonimo",
         rating: r.score,             // adaptar `score` → `rating`
         comment: r.comment
@@ -49,7 +50,7 @@ export default function ReviewsPage() {
             </button>
             <h1 className="text-3xl font-bold mb-8 text-[#002c66]">
               <span className="md:hidden">Reseñas</span>
-              <span className="hidden md:inline">Reseñas de Embarcadero</span>
+              <span className="hidden md:inline">Reseñas de {restaurantName}</span>
             </h1>
           </div>
         </div>

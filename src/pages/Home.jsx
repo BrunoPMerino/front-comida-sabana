@@ -25,6 +25,12 @@ export default function RestaurantList() {
       return;
     }
 
+        if ( user.role === "pos") {
+      
+      navigate(`/restaurant/${user.restaurantId}`);
+      return;
+    }
+
     const fetchRestaurants = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/products`, {
