@@ -34,10 +34,8 @@ export default function UserInfoPopup({ showPopup, setShowPopup }) {
 
   return (
     <>
-      {/* Fondo oscuro */}
       <div className="fixed inset-0 bg-black/50 z-40"></div>
 
-      {/* Popup visible en todas las pantallas */}
       <div
         ref={popupRef}
         className="fixed top-20 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-white p-6 rounded-md shadow-xl z-50"

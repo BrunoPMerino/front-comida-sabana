@@ -1,7 +1,6 @@
 export default function ProductInventoryCard({ product, onEdit }) {
   return (
     <div className="w-[170px] h-[220px] bg-white rounded-md shadow p-4 flex flex-col justify-between">
-      {/* Imagen del producto */}
       <div className="w-full h-[100px] bg-gray-200 rounded relative overflow-hidden">
         <img
           src={product.imageUrl}
@@ -16,7 +15,6 @@ export default function ProductInventoryCard({ product, onEdit }) {
         </div>
       </div>
 
-      {/* Información del producto */}
       <div className="mt-2 text-sm font-bold text-gray-900 truncate">{product.name}</div>
       <div className="text-xs text-gray-600 truncate">{product.description}</div>
       <div className="text-sm text-gray-800 font-semibold mt-1">

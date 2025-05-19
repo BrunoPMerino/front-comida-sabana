@@ -58,7 +58,6 @@ export default function OrderHistory() {
   };
 
   const handleAdvance = () => {
-    // Simple reload after advancing status
     if (user) {
       const endpoint = isPOS
         ? `${API_URL}/api/orders/restaurant/${user.restaurantId}`
@@ -85,7 +84,6 @@ export default function OrderHistory() {
           {isPOS ? "Órdenes del restaurante" : "Historial de pedidos"}
         </h1>
 
-        {/* En curso */}
         <h2 className="text-lg font-semibold mb-2">En curso</h2>
         <div className="space-y-4 mb-6">
           {activeOrders.length === 0 ? (
@@ -105,7 +103,6 @@ export default function OrderHistory() {
           )}
         </div>
 
-        {/* Finalizados */}
         <h2 className="text-lg font-semibold mb-2">Finalizados</h2>
         <div className="space-y-4 mb-6">
           {completedOrders.length === 0 ? (
@@ -122,7 +119,6 @@ export default function OrderHistory() {
           )}
         </div>
 
-        {/* Cancelados */}
         <h2 className="text-lg font-semibold mb-2">Cancelados</h2>
         <div className="space-y-4">
           {cancelledOrders.length === 0 ? (

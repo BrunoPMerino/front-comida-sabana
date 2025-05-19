@@ -52,7 +52,6 @@ export default function TopNavbar() {
 
         {isPOS ? (
           <div className="flex items-center gap-4 ml-auto">
-            {/* Inventario */}
             <div
               className="hidden md:flex items-center gap-1 cursor-pointer"
               onClick={() => navigate("/inventory")}
@@ -75,7 +74,6 @@ export default function TopNavbar() {
               </span>
             </div>
 
-            {/* Órdenes */}
             <div
               className="hidden md:flex items-center gap-1 cursor-pointer"
               onClick={() => navigate("/history")}
@@ -98,7 +96,6 @@ export default function TopNavbar() {
               </span>
             </div>
 
-            {/* Perfil */}
             <div className="flex items-center gap-1 cursor-pointer" onClick={togglePopup}>
               <FaUser
                 className={`text-xl ${
@@ -114,7 +111,6 @@ export default function TopNavbar() {
               </span>
             </div>
 
-            {/* Carrito */}
             <div
               className="hidden md:flex items-center gap-1 cursor-pointer"
               onClick={toggleCart}

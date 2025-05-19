@@ -19,7 +19,6 @@ export default function RestaurantPage() {
   const [restaurantError, setRestaurantError] = useState(false);
   const categoryRefs = useRef({});
 
-  // 🔄 Fetch de productos y restaurante
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,7 +48,6 @@ export default function RestaurantPage() {
     fetchData();
   }, [restaurantId]);
 
-  // Categorización
   const categoryMap = products.reduce((acc, product) => {
     const uniqueCategories = new Set((product.categories || []).map(cat => cat.trim().toLowerCase()));
     uniqueCategories.forEach((normalized) => {
@@ -98,17 +96,14 @@ export default function RestaurantPage() {
 
       <div className="mt-20 md:mt-24 px-4 md:px-8">
 
-        {/* ❗ Si el restaurante no existe */}
         {restaurantError && (
           <div className="text-center mt-20 text-red-600 text-lg font-semibold">
             No se pudo cargar la información del restaurante. Por favor, intenta más tarde o verifica el enlace.
           </div>
         )}
 
-        {/* ✅ Si el restaurante existe */}
         {restaurantInfo && (
           <>
-            {/* Encabezado */}
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center mb-6">
               <img
                 src={restaurantInfo.imageUrl}
@@ -140,7 +135,6 @@ export default function RestaurantPage() {
               </div>
             </div>
 
-            {/* Categorías navegables */}
             {products.length > 0 && (
               <div className="mt-6 border-b border-gray-200 overflow-x-auto whitespace-nowrap text-sm sticky top-14 z-30 bg-white">
                 {categories.map((cat) => (
@@ -162,7 +156,6 @@ export default function RestaurantPage() {
               </div>
             )}
 
-            {/* Productos */}
             <div className="mt-6">
               {categories.map((cat) => (
                 <section
@@ -182,6 +175,7 @@ export default function RestaurantPage() {
                         name={item.name}
                         description={item.description}
                         price={item.price}
+                        stock={item.quantity}
                         onClick={() => setSelectedProduct(item)}
                       />
                     ))}
@@ -190,7 +184,6 @@ export default function RestaurantPage() {
               ))}
             </div>
 
-            {/* Si no hay productos */}
             {products.length === 0 && (
               <p className="text-center text-gray-500 mt-8">
                 Este restaurante no tiene productos disponibles por ahora.

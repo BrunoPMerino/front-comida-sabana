@@ -12,11 +12,12 @@ export default function ProductGrid({ categories, activeCategory, products }) {
           <div className="flex flex-wrap gap-4">
             {products.map((product, idx) => (
               <ProductCard
-                key={idx}
-                image={product.image}
+                image={product.imageUrl}
                 name={product.name}
                 description={product.description}
                 price={product.price}
+                stock={product.quantity} 
+                onClick={() => setSelectedProduct(product)}
               />
             ))}
           </div>

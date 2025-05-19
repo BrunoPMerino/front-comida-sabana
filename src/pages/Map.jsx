@@ -18,7 +18,6 @@ export default function MapPage() {
     const navigate = useNavigate();
     const user = useUserStore((state) => state.user);
 
-  // Get user location
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((pos) => {
             setUserPosition({
@@ -31,7 +30,6 @@ export default function MapPage() {
         );
     }, []);
 
-  // Fetch restaurants
     useEffect(() => {
         if (user === undefined) return;
         if (!user) {
@@ -52,7 +50,6 @@ export default function MapPage() {
     fetchRestaurants();
     }, [API_URL, navigate, user]);
 
-  // Load route
     useEffect(() => {
         if (!selectedRestaurant || !userPosition) return;
 

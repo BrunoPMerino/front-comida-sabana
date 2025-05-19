@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
-import CartPopup from "./CartPopup";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -65,7 +64,6 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         <div className="px-4 py-2">
-          {/* Sección Restaurantes */}
           <div className={`border-t ${!expanded ? "border-b" : ""} py-2 my-4`}>
             <h2
               className="font-bold text-md mb-2 cursor-pointer px-2"
@@ -95,15 +93,12 @@ export default function Sidebar({ isOpen, onClose }) {
                         onClose();
                       }}
                     >
-                      {/* Línea superior corta (excepto en el primero) */}
                       {!isFirst && (
                         <div className="absolute top-0 left-4 w-[85%] h-px bg-black"></div>
                       )}
 
-                      {/* Contenido */}
                       {rest.name}
 
-                      {/* Línea inferior solo en el último restaurante */}
                       {isLast && (
                         <div className="absolute bottom-0 left-4 w-[85%] h-px bg-black"></div>
                       )}
@@ -114,7 +109,6 @@ export default function Sidebar({ isOpen, onClose }) {
             )}
           </div>
 
-          {/* Mapa y Pedidos */}
           <div className="border-t border-b py-2 my-4">
             <button
               onClick={() => {
@@ -147,7 +141,6 @@ export default function Sidebar({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Usuario y cerrar sesión */}
           <div className="mt-6 border-t pt-4">
             <p className="text-sm font-medium">Usuario</p>
             <p className="text-sm">

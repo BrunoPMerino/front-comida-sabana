@@ -17,21 +17,42 @@ export default function Register() {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
 
-    useEffect(() => {
-      if (user === undefined) return;
-      if (user) {
-        navigate("/home");
-      }
-    }, [user, navigate]);
-  
+  useEffect(() => {
+    if (user === undefined) return;
+    if (user) navigate("/home");
+  }, [user, navigate]);
+
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
+    if (!name.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
+      setError("Por favor completa todos los campos.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("El correo electrónico no es válido.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
     try {
       await axios.post(
         `${API_URL}/api/auth/signup`,
-        { email, name, lastName, password },
+        {
+          name: name.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          password: password.trim(),
+        },
         { withCredentials: true }
       );
 
@@ -44,9 +65,8 @@ export default function Register() {
       navigate("/home");
     } catch (error) {
       console.error("Registro fallido:", error.response?.data || error.message);
-
       if (Array.isArray(error.response?.data?.errors)) {
-        setError(error.response.data.errors.map(e => e.msg).join(" - "));
+        setError(error.response.data.errors.map((e) => e.msg).join(" - "));
       } else {
         setError(error.response?.data?.message || "Ocurrió un error durante el registro.");
       }
@@ -95,9 +115,7 @@ export default function Register() {
           />
 
           {error && (
-            <div className="text-red-600 text-sm mb-2 font-medium">
-              {error}
-            </div>
+            <div className="text-red-600 text-sm mb-2 font-medium">{error}</div>
           )}
 
           <div className="text-sm mb-4">

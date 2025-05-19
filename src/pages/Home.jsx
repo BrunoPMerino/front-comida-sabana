@@ -8,7 +8,7 @@ import MobileNavbar from "../components/MobileNavbar";
 import ProductPopup from "../components/ProductPopup";
 import useUserStore from "../store/useUserStore";
 
-export default function RestaurantList() {
+export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -25,8 +25,7 @@ export default function RestaurantList() {
       return;
     }
 
-        if ( user.role === "pos") {
-      
+    if (user.role === "pos") {
       navigate(`/restaurant/${user.restaurantId}`);
       return;
     }
@@ -81,8 +80,10 @@ export default function RestaurantList() {
                   <ProductCard
                     image={item.imageUrl}
                     name={item.name}
-                    price={item.price}
                     description={item.description}
+                    price={item.price}
+                    stock={item.quantity}
+                    onClick={() => setSelectedProduct(item)}
                   />
                 </div>
               ))}

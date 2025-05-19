@@ -4,7 +4,7 @@ import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 export default function StatusNotification({
   message = "Estado actualizado",
   onClose,
-  type = "success", // "success", "warning", "error"
+  type = "success", 
 }) {
   useEffect(() => {
     const timeout = setTimeout(onClose, 3000);

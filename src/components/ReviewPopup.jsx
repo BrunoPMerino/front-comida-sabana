@@ -18,7 +18,6 @@ export default function ReviewPopup({ onClose, onSubmit }) {
         className="relative bg-white w-full md:w-[600px] rounded-t-2xl md:rounded-xl p-6 md:mb-0"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Texto visual "Omitir" justo fuera del borde superior derecho del card */}
         <span className="absolute -top-5 right-4 text-white text-sm pointer-events-none select-none">
           Omitir
         </span>

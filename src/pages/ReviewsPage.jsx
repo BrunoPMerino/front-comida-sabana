@@ -27,7 +27,7 @@ export default function ReviewsPage() {
         const response = await axios.get(`${API_URL}/api/reviews/${restaurantId}`);
         const transformed = response.data.map(r => ({
         userName: r.userId?.name ?? "Usuario anonimo",
-        rating: r.score,             // adaptar `score` → `rating`
+        rating: r.score,             
         comment: r.comment
       }));
         setReviews(transformed);
