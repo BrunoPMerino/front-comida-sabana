@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import useUserStore from "./store/useUserStore";
 import axios from "axios";
 import Pusher from 'pusher-js';
-//import OrderNotificationModal from "./components/OrderNotificationModal"; // Asegúrate de la ruta correcta
+import StatusNotification from "./components/StatusNotification"; 
 
 export default function App() {
   const { user, setUser } = useUserStore();
   const [authChecked, setAuthChecked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
-  const [currentNotification, setCurrentNotification] = useState(null); // Estado para la notificación actual
+  const [showNotification, setShowNotification] = useState(false); // Estado para mostrar la notificación
+  const [notificationMessage, setNotificationMessage] = useState(""); // Mensaje de la notificación
+  const [notificationType, setNotificationType] = useState("success"); // Tipo de notificación
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -60,8 +61,9 @@ export default function App() {
 
   channel.bind('order-status-updated', (data) => {
     console.log('Estado de la orden actualizado:', data);
-    setCurrentNotification(data);
-    setIsModalOpen(true);
+    setNotificationMessage(`Una de tus ordenes ahora está en estado "${data.newStatus}"`);
+    setNotificationType("success"); // Puedes ajustar el tipo según el estado   
+    setShowNotification(true);
   });
 
   return () => {
@@ -70,9 +72,9 @@ export default function App() {
   };
 }, [authChecked, user?._id]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentNotification(null);
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
   };
 
   // 6. Mientras no sepamos si hay usuario, mostramos loading
@@ -82,19 +84,19 @@ export default function App() {
 
   // 7. Ya podemos renderizar rutas (privadas o públicas)
   return (
-    //<>
-      //{currentNotification && (
-        //<OrderNotificationModal
-          //isOpen={isModalOpen}
-          //onClose={closeModal}
-          //notification={currentNotification}
-        ///>
-      //)}
+    <>
+      {showNotification && (
+        <StatusNotification
+          message={notificationMessage}
+          onClose={handleCloseNotification}
+          type={notificationType}
+        />
+      )}
       <Routes>
         {routes.map((route) => (
           <Route key={route.id} path={route.path} element={<route.component />} />
         ))}
       </Routes>
-    //</>
+    </>
   );
 }
