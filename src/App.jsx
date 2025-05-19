@@ -3,16 +3,19 @@ import { routes } from "./config/routes";
 import { useEffect, useState } from "react";
 import useUserStore from "./store/useUserStore";
 import axios from "axios";
+import Pusher from 'pusher-js';
+//import OrderNotificationModal from "./components/OrderNotificationModal"; // Asegúrate de la ruta correcta
 
 export default function App() {
-  const { setUser } = useUserStore();
-  const [authChecked, setAuthChecked] = useState(false); // clave para evitar doble render
+  const { user, setUser } = useUserStore();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+  const [currentNotification, setCurrentNotification] = useState(null); // Estado para la notificación actual
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // 1. Intentamos obtener el usuario directamente
         const res = await axios.get(`${API_URL}/api/auth/me`, {
           withCredentials: true,
         });
@@ -20,18 +23,14 @@ export default function App() {
       } catch (err) {
         if (err.response?.status === 401 || err.response?.status === 403) {
           try {
-            // 2. Intentamos refrescar el token
             await axios.post(`${API_URL}/api/auth/refresh`, {}, {
               withCredentials: true,
             });
-
-            // 3. Reintentamos obtener el usuario
             const res = await axios.get(`${API_URL}/api/auth/me`, {
               withCredentials: true,
             });
             setUser(res.data.user);
           } catch (refreshErr) {
-            // 4. Si falla el refresh, el usuario no está autenticado
             console.error("Token refresh failed", refreshErr);
             setUser(null);
           }
@@ -40,13 +39,41 @@ export default function App() {
           setUser(null);
         }
       } finally {
-        // 5. Ya sabemos si el usuario está o no → podemos mostrar rutas
         setAuthChecked(true);
       }
     };
 
     checkAuth();
   }, [API_URL, setUser]);
+
+  //Integracion con pusher
+  useEffect(() => {
+  if (!authChecked || !user?._id) return;
+
+  console.log('✅ Usuario logueado:', user._id);
+
+  const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+    cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+  });
+
+  const channel = pusher.subscribe(`user-${user._id}`);
+
+  channel.bind('order-status-updated', (data) => {
+    console.log('Estado de la orden actualizado:', data);
+    setCurrentNotification(data);
+    setIsModalOpen(true);
+  });
+
+  return () => {
+    channel.unbind_all();
+    pusher.disconnect();
+  };
+}, [authChecked, user?._id]);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setCurrentNotification(null);
+  };
 
   // 6. Mientras no sepamos si hay usuario, mostramos loading
   if (!authChecked) {
@@ -55,10 +82,19 @@ export default function App() {
 
   // 7. Ya podemos renderizar rutas (privadas o públicas)
   return (
-    <Routes>
-      {routes.map((route) => (
-        <Route key={route.id} path={route.path} element={<route.component />} />
-      ))}
-    </Routes>
+    //<>
+      //{currentNotification && (
+        //<OrderNotificationModal
+          //isOpen={isModalOpen}
+          //onClose={closeModal}
+          //notification={currentNotification}
+        ///>
+      //)}
+      <Routes>
+        {routes.map((route) => (
+          <Route key={route.id} path={route.path} element={<route.component />} />
+        ))}
+      </Routes>
+    //</>
   );
 }
