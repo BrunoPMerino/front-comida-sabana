@@ -47,7 +47,7 @@ export default function CartPopup({ onClose }) {
     if (cartItems.length === 0) return;
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/api/orders/client`,
         {
           restaurantId: cartItems[0].restaurantId,
@@ -78,7 +78,7 @@ export default function CartPopup({ onClose }) {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/api/orders/pos`,
         {
           name: customerName,
@@ -103,14 +103,16 @@ export default function CartPopup({ onClose }) {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center md:justify-center"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center bg-black/50">
+      {/* Clic fuera cierra el popup */}
+      <div className="absolute inset-0" onClick={onClose} />
+
+      {/* Contenido del popup */}
       <div
-        className="relative w-full h-full md:h-auto md:max-w-xl bg-white rounded-t-2xl md:rounded-xl p-6 overflow-y-auto"
+        className="relative z-10 w-full max-h-[85vh] sm:max-w-sm md:max-w-xl md:h-auto bg-white rounded-t-2xl md:rounded-xl p-6 overflow-y-auto mx-auto mt-6 sm:mt-0"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Botón de cerrar */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white md:text-gray-600 bg-blue-900 md:bg-transparent p-1 rounded-full"
@@ -118,6 +120,7 @@ export default function CartPopup({ onClose }) {
           <FaTimes className="w-4 h-4" />
         </button>
 
+        {/* Título */}
         <h2 className="text-xl font-bold mb-4">Carrito de compras</h2>
 
         {cartItems.length === 0 ? (

@@ -3,13 +3,19 @@ import { Link, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaMapMarkerAlt,
-  FaListAlt,
   FaShoppingCart,
 } from "react-icons/fa";
+import { HiOutlineClipboardList } from "react-icons/hi";
+import { BsBoxSeam } from "react-icons/bs";
 import ReviewPopup from "./ReviewPopup";
+import CartPopup from "./CartPopup";
+import useUserStore from "../store/useUserStore";
 
 export default function MobileNavbar({ isDisabled = false }) {
   const { pathname } = useLocation();
+  const { user } = useUserStore();
+  const isPOS = user?.role === "pos";
+
   const [showPopup, setShowPopup] = useState(false);
   const popupRef = useRef();
 
@@ -26,6 +32,8 @@ export default function MobileNavbar({ isDisabled = false }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const activeStyle = "text-yellow-300";
+
   return (
     <>
       <nav
@@ -34,31 +42,55 @@ export default function MobileNavbar({ isDisabled = false }) {
         }`}
       >
         <Link to="/home" aria-label="Home">
-          <FaHome className="w-6 h-6" />
+          <FaHome className={`w-6 h-6 ${pathname === "/home" ? activeStyle : ""}`} />
         </Link>
-        <Link to="/map" aria-label="Mapa">
-          <FaMapMarkerAlt className="w-6 h-6" />
-        </Link>
-        <Link to="/history" aria-label="Historial">
-          <FaListAlt className="w-6 h-6" />
-        </Link>
-        <button onClick={() => setShowPopup(true)} aria-label="Register">
-          <FaShoppingCart className="w-6 h-6" />
-        </button>
+
+        {isPOS ? (
+          <>
+            <Link to="/history" aria-label="Pedidos">
+              <HiOutlineClipboardList
+                className={`w-6 h-6 ${pathname === "/history" ? activeStyle : ""}`}
+              />
+            </Link>
+            <button onClick={() => setShowPopup(true)} aria-label="Carrito">
+              <FaShoppingCart
+                className={`w-6 h-6 ${showPopup ? activeStyle : ""}`}
+              />
+            </button>
+            <Link to="/inventory" aria-label="Inventario">
+              <BsBoxSeam
+                className={`w-6 h-6 ${pathname === "/inventory" ? activeStyle : ""}`}
+              />
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link to="/map" aria-label="Mapa">
+              <FaMapMarkerAlt
+                className={`w-6 h-6 ${pathname === "/map" ? activeStyle : ""}`}
+              />
+            </Link>
+            <Link to="/history" aria-label="Historial">
+              <HiOutlineClipboardList
+                className={`w-6 h-6 ${pathname === "/history" ? activeStyle : ""}`}
+              />
+            </Link>
+            <button onClick={() => setShowPopup(true)} aria-label="Carrito">
+              <FaShoppingCart
+                className={`w-6 h-6 ${showPopup ? activeStyle : ""}`}
+              />
+            </button>
+          </>
+        )}
       </nav>
+
       {showPopup && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] z-50 flex items-end md:items-center justify-center">
           <div
             ref={popupRef}
             className="w-full md:w-[600px] bg-white rounded-t-2xl md:rounded-xl p-6"
           >
-            <ReviewPopup
-              onClose={() => setShowPopup(false)}
-              onSubmit={(data) => {
-                console.log("Review enviada:", data);
-                setShowPopup(false);
-              }}
-            />
+            <CartPopup onClose={() => setShowPopup(false)} />
           </div>
         </div>
       )}
