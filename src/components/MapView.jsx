@@ -1,8 +1,6 @@
 import Map, { Marker, NavigationControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-
 const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
-
 export default function MapView({ restaurants }) {
   // Optional: calculate center from restaurants or use fixed coords
   const center = restaurants.length
@@ -24,26 +22,26 @@ export default function MapView({ restaurants }) {
     >
       <NavigationControl position="top-right" />
       {restaurants.map((r) => (
-        <div key={r._id} style={{ position: 'relative' }}>
-          <Marker latitude={r.latitude} longitude={r.longitude} />
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '-30px', // Adjust as needed to position above the marker
-              transform: 'translateX(-50%)',
-              backgroundColor: 'white',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '0.9em',
+        <Marker key={r._id} latitude={r.latitude} longitude={r.longitude}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* Red marker */}
+            <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: 'red', marginBottom: 4 }} />
+            {/* Info box */}
+            <div style={{
+              background: 'white',
+              padding: '4px 6px',
+              borderRadius: 4,
+              boxShadow: '0 0 4px rgba(0,0,0,0.3)',
+              fontSize: 12,
               textAlign: 'center',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-            }}
-          >
-            {r.name}
+            }}>
+              <div><strong>{r.name}</strong></div>
+              <div>⭐ {r.averageScore}</div>
+              <div>🕒 {Math.round(r.estimatedTime)} min</div>
+            </div>
           </div>
-        </div>
+        </Marker>
       ))}
     </Map>
   );
-}
+} 
